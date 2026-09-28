@@ -676,35 +676,28 @@ if st.button(
     type="primary",
     use_container_width=True
 ):
+    
+# =====================================================
+# VALIDATE HEADER
+# Lot Number is optional
+# =====================================================
 
-    # =====================================================
-    # VALIDATE HEADER
-    # =====================================================
-
-    missing_header = []
-
-
-    if not lot_number.strip():
-
-        missing_header.append(
-            "Lot Number"
-        )
+missing_header = []
 
 
-    if not machine.strip():
+if not machine.strip():
 
-        missing_header.append(
-            "Machine"
-        )
-
-
-    if not inspector.strip():
-
-        missing_header.append(
-            "Inspector"
-        )
+    missing_header.append(
+        "Machine"
+    )
 
 
+if not inspector.strip():
+
+    missing_header.append(
+        "Inspector Badge"
+    )
+    
     # =====================================================
     # VALIDATE CHECKLIST
     # =====================================================
