@@ -10,7 +10,7 @@ import uuid
 # =========================================================
 
 st.set_page_config(
-    page_title="IPQC Checklist",
+    page_title="IPQC Audit Checklist",
     page_icon="📋",
     layout="wide"
 )
