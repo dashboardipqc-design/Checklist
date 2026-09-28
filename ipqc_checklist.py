@@ -15,7 +15,7 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("📋 IPQC Inspection")
+st.title("📋 IPQC Audit Checklist")
 
 
 # =========================================================
