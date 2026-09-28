@@ -666,7 +666,6 @@ for item in items:
         unsafe_allow_html=True
     )
 
-
 # =========================================================
 # SUBMIT INSPECTION
 # =========================================================
@@ -676,28 +675,29 @@ if st.button(
     type="primary",
     use_container_width=True
 ):
-    
-# =====================================================
-# VALIDATE HEADER
-# Lot Number is optional
-# =====================================================
 
-missing_header = []
+    # =====================================================
+    # VALIDATE HEADER
+    # Lot Number is optional
+    # =====================================================
 
-
-if not machine.strip():
-
-    missing_header.append(
-        "Machine"
-    )
+    missing_header = []
 
 
-if not inspector.strip():
+    if not machine.strip():
 
-    missing_header.append(
-        "Inspector Badge"
-    )
-    
+        missing_header.append(
+            "Machine"
+        )
+
+
+    if not inspector.strip():
+
+        missing_header.append(
+            "Inspector Badge"
+        )
+
+
     # =====================================================
     # VALIDATE CHECKLIST
     # =====================================================
