@@ -455,6 +455,10 @@ with col_shift:
 # LOT / MACHINE / INSPECTOR
 # =========================================================
 
+# =========================================================
+# LOT / MACHINE / INSPECTOR
+# =========================================================
+
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -466,13 +470,15 @@ with col1:
 with col2:
 
     machine = st.text_input(
-        "Machine"
+        "Machine",
+        placeholder="e.g. ICO-01"
     )
 
 with col3:
 
     inspector = st.text_input(
-        "Inspector"
+        "Inspector",
+        placeholder="e.g. 505641"
     )
 
 
