@@ -466,7 +466,7 @@ with col1:
 with col2:
 
     machine = st.text_input(
-        "Machine",
+        "Machine / Workstation Number",
         placeholder="e.g. ICO-01"
     )
 
