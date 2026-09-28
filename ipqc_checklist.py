@@ -455,10 +455,6 @@ with col_shift:
 # LOT / MACHINE / INSPECTOR
 # =========================================================
 
-# =========================================================
-# LOT / MACHINE / INSPECTOR
-# =========================================================
-
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -477,7 +473,7 @@ with col2:
 with col3:
 
     inspector = st.text_input(
-        "Inspector",
+        "Inspector Badge",
         placeholder="e.g. 505641"
     )
 
