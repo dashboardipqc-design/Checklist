@@ -115,14 +115,23 @@ if not factory:
 # AREA SELECTION
 # =========================================================
 
-areas = sorted(
-    list(
-        set(
-            row["area"]
-            for row in checklists
-        )
-    )
-)
+AREA_ORDER = [
+    "DP",
+    "FOL",
+    "MOL",
+    "EOL"
+]
+
+available_areas = {
+    row["area"]
+    for row in checklists
+}
+
+areas = [
+    area_name
+    for area_name in AREA_ORDER
+    if area_name in available_areas
+]
 
 area = st.selectbox(
     "Area",
