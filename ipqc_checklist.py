@@ -1068,7 +1068,7 @@ if st.button(
 
                 st.link_button(
                     "Open IPQC Finding Entry",
-                    "https://ipqc-dashboard-krg8ucctibly9j4y5orjzl.streamlit.app/",
+                    "https://ipqcchecklist.streamlit.app/",
                     type="primary",
                     use_container_width=True
                 )
