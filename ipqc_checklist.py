@@ -565,15 +565,21 @@ st.divider()
 # PROCESS RUNNING STATUS
 # =========================================================
 
-process_status = st.radio(
-    "Process Status",
-    [
-        "Running",
-        "Not Running"
-    ],
-    horizontal=True,
-    key=f"process_status_{factory}_{checklist_id}_{shift_date}_{shift}"
-)
+if submission_mode == "ADDITIONAL":
+
+    process_status = "Running"
+
+else:
+
+    process_status = st.radio(
+        "Process Status",
+        [
+            "Running",
+            "Not Running"
+        ],
+        horizontal=True,
+        key=f"process_status_{factory}_{checklist_id}_{shift_date}_{shift}"
+    )
 
 # =========================================================
 # NOT RUNNING PROCESS
