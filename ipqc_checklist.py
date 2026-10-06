@@ -1523,7 +1523,7 @@ if not inspector.strip():
                 st.warning(
                     f"{len(failed_items)} failed "
                     "checklist item(s) detected. "
-                    "Please raise a finding."
+                    "Redirecting to Finding Entry..."
                 )
 
                 for failed_item in failed_items:
@@ -1534,11 +1534,24 @@ if not inspector.strip():
                         f"{failed_item['item_description']}"
                     )
 
-                st.link_button(
-                    "Open IPQC Finding Entry",
-                    "https://ipqcchecklist.streamlit.app/",
-                    type="primary",
-                    use_container_width=True
+                time.sleep(1)
+
+                st.session_state.pop(
+                    "inspection_session_key",
+                    None
+                )
+
+                st.session_state.pop(
+                    "inspection_start_time",
+                    None
+                )
+
+                st.markdown(
+                    """
+                    <meta http-equiv="refresh"
+                    content="0; url=https://ipqcfinding.streamlit.app/">
+                    """,
+                    unsafe_allow_html=True
                 )
 
             else:
