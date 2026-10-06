@@ -3,7 +3,7 @@ from supabase import create_client
 from datetime import datetime, date, timedelta
 from zoneinfo import ZoneInfo
 import uuid
-
+import time
 
 # =========================================================
 # PAGE CONFIG
@@ -1379,30 +1379,21 @@ if st.button(
             # FINDING ENTRY
             # =================================================
 
-            if failed_items:
+                        else:
 
-                st.warning(
-                    f"{len(failed_items)} failed "
-                    "checklist item(s) detected. "
-                    "Please raise a finding."
+                time.sleep(1)
+
+                st.session_state.pop(
+                    "inspection_session_key",
+                    None
                 )
 
-
-                for failed_item in failed_items:
-
-                    st.write(
-                        f"• "
-                        f"{failed_item['item_code']} - "
-                        f"{failed_item['item_description']}"
-                    )
-
-
-                st.link_button(
-                    "Open IPQC Finding Entry",
-                    "https://ipqcchecklist.streamlit.app/",
-                    type="primary",
-                    use_container_width=True
+                st.session_state.pop(
+                    "inspection_start_time",
+                    None
                 )
+
+                st.rerun()
 
 
         except Exception as e:
