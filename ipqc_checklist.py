@@ -679,9 +679,7 @@ additional_available = max(
 if process_already_not_running:
 
     st.warning(
-        f"🟡 Process Not Running\n\n"
-        f"{process} has already been marked "
-        f"Not Running for the current shift."
+        f"🟡 Process Not Running. This process has been marked not Running for the current shift."
     )
 
     st.stop()
