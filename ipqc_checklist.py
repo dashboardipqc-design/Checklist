@@ -372,31 +372,19 @@ area_checklists = [
 
 process_display_map = {}
 
-process_status_map = {}
-
 for row in area_checklists:
 
     process_name = row["process"]
     process_checklist_id = row["id"]
 
-
-    # -----------------------------------------------------
-    # NOT RUNNING
-    # -----------------------------------------------------
-
+    # Process already marked NOT RUNNING
     if process_checklist_id in status_not_running_processes:
 
         display_name = (
             f"☒ {process_name}"
         )
 
-        status_name = "NOT_RUNNING"
-
-
-    # -----------------------------------------------------
-    # SUBMITTED — NO ADDITIONAL CREDIT
-    # -----------------------------------------------------
-
+    # Process already completed and no additional credit
     elif (
         process_checklist_id in status_completed_processes
         and
@@ -407,30 +395,16 @@ for row in area_checklists:
             f"☑ {process_name}"
         )
 
-        status_name = "SUBMITTED"
-
-
-    # -----------------------------------------------------
-    # YET TO SUBMIT
-    # OR SUBMITTED BUT ADDITIONAL CREDIT AVAILABLE
-    # -----------------------------------------------------
-
+    # Not submitted OR additional credit available
     else:
 
         display_name = (
             f"☐ {process_name}"
         )
 
-        status_name = "AVAILABLE"
-
-
     process_display_map[
         display_name
     ] = process_name
-
-    process_status_map[
-        display_name
-    ] = status_name
 
 
 # ---------------------------------------------------------
@@ -464,65 +438,6 @@ if not selected_process_display:
 process = process_display_map[
     selected_process_display
 ]
-
-selected_process_status = process_status_map[
-    selected_process_display
-]
-
-
-# ---------------------------------------------------------
-# DISPLAY PROCESS STATUS COLOR
-# ---------------------------------------------------------
-
-if selected_process_status == "SUBMITTED":
-
-    st.markdown(
-        f"""
-        <div style="
-            color: #22c55e;
-            font-weight: 700;
-            margin-top: -8px;
-            margin-bottom: 8px;
-        ">
-            ☑ {process}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-
-elif selected_process_status == "NOT_RUNNING":
-
-    st.markdown(
-        f"""
-        <div style="
-            color: #ef4444;
-            font-weight: 700;
-            margin-top: -8px;
-            margin-bottom: 8px;
-        ">
-            ☒ {process}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-
-else:
-
-    st.markdown(
-        f"""
-        <div style="
-            color: #ffffff;
-            font-weight: 700;
-            margin-top: -8px;
-            margin-bottom: 8px;
-        ">
-            ☐ {process}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
 # =========================================================
 # FIND SELECTED CHECKLIST
 # =========================================================
