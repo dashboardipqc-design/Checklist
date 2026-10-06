@@ -844,7 +844,13 @@ if st.button(
 
                 "shift":
                     shift,
+                
+                "shift_date":
+                    shift_date.isoformat(),
 
+                "submission_type":
+                    "NORMAL",
+                
                 "inspection_datetime":
                     inspection_datetime.isoformat(),
 
