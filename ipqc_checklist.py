@@ -1205,7 +1205,7 @@ if st.button(
     ):
 
         invalid_header.append(
-            "Inspector Badge must be exactly 6 digits."
+            "Inspector Badge must be six (6) numerical digits."
         )
     # =====================================================
     # VALIDATE CHECKLIST
