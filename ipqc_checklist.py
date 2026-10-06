@@ -496,8 +496,11 @@ st.info(
 )
 
 # =========================================================
-# NORMAL SUBMISSION STATUS
+# DETERMINE SUBMISSION MODE
 # =========================================================
+
+submission_mode = "NORMAL"
+
 
 if normal_submission_exists:
 
@@ -506,23 +509,62 @@ if normal_submission_exists:
         .data[0]["inspection_no"]
     )
 
-    st.warning(
-        "This process checklist has already been "
-        "submitted for the current shift."
-    )
+    # -----------------------------------------------------
+    # ADDITIONAL CREDIT AVAILABLE
+    # -----------------------------------------------------
 
-    st.info(
-        f"Existing Inspection No: "
-        f"{existing_inspection_no}"
-    )
+    if additional_available > 0:
 
-    st.caption(
-        f"Factory: {factory} | "
-        f"Shift Date: {shift_date.strftime('%d-%b-%Y')} | "
-        f"Shift: {shift}"
-    )
+        submission_mode = "ADDITIONAL"
 
-    st.stop()
+        st.warning(
+            "This process checklist has already been "
+            "submitted normally for the current shift."
+        )
+
+        st.info(
+            f"Existing Inspection No: "
+            f"{existing_inspection_no}"
+        )
+
+        st.success(
+            f"Additional submission is available. "
+            f"Remaining credit: {additional_available}"
+        )
+
+        st.caption(
+            "This submission will use 1 additional "
+            "checklist credit."
+        )
+
+    # -----------------------------------------------------
+    # NO ADDITIONAL CREDIT AVAILABLE
+    # -----------------------------------------------------
+
+    else:
+
+        st.warning(
+            "This process checklist has already been "
+            "submitted for the current shift."
+        )
+
+        st.info(
+            f"Existing Inspection No: "
+            f"{existing_inspection_no}"
+        )
+
+        st.error(
+            "No additional checklist submission "
+            "credit is available."
+        )
+
+        st.caption(
+            f"Factory: {factory} | "
+            f"Shift Date: {shift_date.strftime('%d-%b-%Y')} | "
+            f"Shift: {shift}"
+        )
+
+        st.stop()
     
 # =========================================================
 # INSPECTION INFORMATION
@@ -1090,7 +1132,7 @@ if st.button(
                     shift_date.isoformat(),
 
                 "submission_type":
-                    "NORMAL",
+                    submission_mode,
                 
                 "inspection_datetime":
                     inspection_datetime.isoformat(),
