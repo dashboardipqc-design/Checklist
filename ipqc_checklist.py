@@ -403,7 +403,7 @@ for row in area_checklists:
     else:
 
         display_name = (
-            f"　 {process_name}"
+            f"☐ {process_name}"
         )
 
     process_display_map[
