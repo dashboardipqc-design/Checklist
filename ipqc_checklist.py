@@ -507,124 +507,98 @@ if process_status == "Not Running":
         use_container_width=True
     )
 
- if confirm_not_running:
+    if confirm_not_running:
 
-    if not not_running_inspector.strip():
+        if not not_running_inspector.strip():
 
-        st.error(
-            "Please enter Inspector Badge."
-        )
-
-    else:
-
-        try:
-
-            # -------------------------------------------------
-            # DOUBLE CHECK NOT RUNNING HAS NOT BEEN RECORDED
-            # -------------------------------------------------
-
-            existing_not_running = (
-                supabase
-                .table("inspection_header")
-                .select("id")
-                .eq("factory", factory)
-                .eq("checklist_id", checklist_id)
-                .eq("shift_date", shift_date.isoformat())
-                .eq("shift", shift)
-                .eq("submission_type", "NOT_RUNNING")
-                .execute()
+            st.error(
+                "Please enter Inspector Badge."
             )
 
-            if existing_not_running.data:
+        else:
 
-                st.warning(
-                    "This process has already been marked "
-                    "Not Running for the current shift."
-                )
-
-            else:
+            try:
 
                 # -------------------------------------------------
-                # CREATE NOT RUNNING RECORD
+                # CHECK IF ALREADY MARKED NOT RUNNING
                 # -------------------------------------------------
 
-                submitted_datetime = datetime.now(
-                    ZoneInfo("Asia/Kuala_Lumpur")
-                )
-
-                inspection_no = (
-                    "NR-"
-                    + submitted_datetime.strftime("%Y%m%d-%H%M%S")
-                    + "-"
-                    + uuid.uuid4().hex[:6].upper()
-                )
-
-                not_running_header = {
-
-                    "inspection_no":
-                        inspection_no,
-
-                    "factory":
-                        factory,
-
-                    "checklist_id":
-                        checklist_id,
-
-                    "version_id":
-                        version_id,
-
-                    "lot_number":
-                        "",
-
-                    "machine":
-                        "",
-
-                    "inspector":
-                        not_running_inspector.strip(),
-
-                    "shift":
-                        shift,
-
-                    "shift_date":
-                        shift_date.isoformat(),
-
-                    "submission_type":
-                        "NOT_RUNNING",
-
-                    "inspection_datetime":
-                        inspection_datetime.isoformat(),
-
-                    "status":
-                        "SUBMITTED",
-
-                    "submitted_at":
-                        submitted_datetime.isoformat()
-                }
-
-                (
+                existing_not_running = (
                     supabase
                     .table("inspection_header")
-                    .insert(not_running_header)
+                    .select("id")
+                    .eq("factory", factory)
+                    .eq("checklist_id", checklist_id)
+                    .eq("shift_date", shift_date.isoformat())
+                    .eq("shift", shift)
+                    .eq("submission_type", "NOT_RUNNING")
                     .execute()
                 )
 
-                st.success(
-                    f"{process} successfully recorded "
-                    f"as Not Running for this shift."
+                if existing_not_running.data:
+
+                    st.warning(
+                        "This process has already been marked "
+                        "Not Running for the current shift."
+                    )
+
+                else:
+
+                    # -------------------------------------------------
+                    # CREATE NOT RUNNING RECORD
+                    # -------------------------------------------------
+
+                    submitted_datetime = datetime.now(
+                        ZoneInfo("Asia/Kuala_Lumpur")
+                    )
+
+                    inspection_no = (
+                        "NR-"
+                        + submitted_datetime.strftime("%Y%m%d-%H%M%S")
+                        + "-"
+                        + uuid.uuid4().hex[:6].upper()
+                    )
+
+                    not_running_header = {
+                        "inspection_no": inspection_no,
+                        "factory": factory,
+                        "checklist_id": checklist_id,
+                        "version_id": version_id,
+                        "lot_number": "",
+                        "machine": "",
+                        "inspector": not_running_inspector.strip(),
+                        "shift": shift,
+                        "shift_date": shift_date.isoformat(),
+                        "submission_type": "NOT_RUNNING",
+                        "inspection_datetime": inspection_datetime.isoformat(),
+                        "status": "SUBMITTED",
+                        "submitted_at": submitted_datetime.isoformat()
+                    }
+
+                    (
+                        supabase
+                        .table("inspection_header")
+                        .insert(not_running_header)
+                        .execute()
+                    )
+
+                    st.success(
+                        f"{process} successfully recorded "
+                        f"as Not Running for this shift."
+                    )
+
+                    st.info(
+                        "1 additional checklist submission "
+                        "has been generated for this shift."
+                    )
+
+                    st.rerun()
+
+            except Exception as e:
+
+                st.error(
+                    f"Unable to save Not Running status: {e}"
                 )
-
-                st.info(
-                    "1 additional checklist submission "
-                    "has been generated for this shift."
-                )
-
-                st.rerun()
-
-        except Exception as e:
-
-            st.error(
-                f"Unable to save Not Running status: {e}"
-            )
 
     st.stop()
     
