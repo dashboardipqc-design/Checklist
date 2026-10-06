@@ -4,6 +4,7 @@ from datetime import datetime, date, timedelta
 from zoneinfo import ZoneInfo
 import uuid
 import time
+import streamlit.components.v1 as components
 
 # =========================================================
 # PAGE CONFIG
@@ -1546,12 +1547,8 @@ if not inspector.strip():
                     None
                 )
 
-                st.markdown(
-                    """
-                    <meta http-equiv="refresh"
-                    content="0; url=https://ipqcfinding.streamlit.app/">
-                    """,
-                    unsafe_allow_html=True
+                st.switch_page(
+                    "https://ipqcfinding.streamlit.app/"
                 )
 
             else:
