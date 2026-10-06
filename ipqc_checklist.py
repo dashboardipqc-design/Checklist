@@ -141,121 +141,8 @@ area = st.selectbox(
 if not area:
     st.stop()
 
-
-# =========================================================
-# PROCESS SELECTION
-# =========================================================
-
-area_checklists = [
-    row
-    for row in checklists
-    if row["area"] == area
-]
-
-processes = sorted(
-    list(
-        set(
-            row["process"]
-            for row in area_checklists
-        )
-    )
-)
-
-process = st.selectbox(
-    "Process",
-    [""] + processes
-)
-
-if not process:
+if not area:
     st.stop()
-
-
-# =========================================================
-# FIND SELECTED CHECKLIST
-# =========================================================
-
-selected_checklist = next(
-    row
-    for row in area_checklists
-    if row["process"] == process
-)
-
-checklist_id = selected_checklist["id"]
-
-
-# =========================================================
-# GET ACTIVE REVISION
-# =========================================================
-
-version_response = (
-    supabase
-    .table("checklist_versions")
-    .select("*")
-    .eq("checklist_id", checklist_id)
-    .eq("active", True)
-    .execute()
-)
-
-versions = version_response.data
-
-if not versions:
-    st.error("No active checklist revision found.")
-    st.stop()
-
-version = versions[0]
-
-version_id = version["id"]
-revision = version["revision"]
-
-
-# =========================================================
-# GET CHECKLIST ITEMS
-# =========================================================
-
-items_response = (
-    supabase
-    .table("checklist_items")
-    .select("*")
-    .eq("version_id", version_id)
-    .eq("active", True)
-    .order("sequence")
-    .execute()
-)
-
-items = items_response.data
-
-if not items:
-    st.warning("No checklist items found.")
-    st.stop()
-
-
-# =========================================================
-# INSPECTION START DATE / TIME
-# =========================================================
-
-inspection_session_key = (
-    f"{factory}_{checklist_id}_{version_id}"
-)
-
-if (
-    "inspection_session_key"
-    not in st.session_state
-    or
-    st.session_state.inspection_session_key
-    != inspection_session_key
-):
-
-    st.session_state.inspection_session_key = (
-        inspection_session_key
-    )
-
-    st.session_state.inspection_start_time = (
-        datetime.now(MALAYSIA_TZ)
-    )
-
-inspection_datetime = (
-    st.session_state.inspection_start_time
-)
 
 
 # =========================================================
@@ -392,6 +279,121 @@ def get_roster_crew(
         cycle_position
     ]
 
+
+# =========================================================
+# PROCESS SELECTION
+# =========================================================
+
+area_checklists = [
+    row
+    for row in checklists
+    if row["area"] == area
+]
+
+processes = sorted(
+    list(
+        set(
+            row["process"]
+            for row in area_checklists
+        )
+    )
+)
+
+process = st.selectbox(
+    "Process",
+    [""] + processes
+)
+
+if not process:
+    st.stop()
+
+
+# =========================================================
+# FIND SELECTED CHECKLIST
+# =========================================================
+
+selected_checklist = next(
+    row
+    for row in area_checklists
+    if row["process"] == process
+)
+
+checklist_id = selected_checklist["id"]
+
+
+# =========================================================
+# GET ACTIVE REVISION
+# =========================================================
+
+version_response = (
+    supabase
+    .table("checklist_versions")
+    .select("*")
+    .eq("checklist_id", checklist_id)
+    .eq("active", True)
+    .execute()
+)
+
+versions = version_response.data
+
+if not versions:
+    st.error("No active checklist revision found.")
+    st.stop()
+
+version = versions[0]
+
+version_id = version["id"]
+revision = version["revision"]
+
+
+# =========================================================
+# GET CHECKLIST ITEMS
+# =========================================================
+
+items_response = (
+    supabase
+    .table("checklist_items")
+    .select("*")
+    .eq("version_id", version_id)
+    .eq("active", True)
+    .order("sequence")
+    .execute()
+)
+
+items = items_response.data
+
+if not items:
+    st.warning("No checklist items found.")
+    st.stop()
+
+
+# =========================================================
+# INSPECTION START DATE / TIME
+# =========================================================
+
+inspection_session_key = (
+    f"{factory}_{checklist_id}_{version_id}"
+)
+
+if (
+    "inspection_session_key"
+    not in st.session_state
+    or
+    st.session_state.inspection_session_key
+    != inspection_session_key
+):
+
+    st.session_state.inspection_session_key = (
+        inspection_session_key
+    )
+
+    st.session_state.inspection_start_time = (
+        datetime.now(MALAYSIA_TZ)
+    )
+
+inspection_datetime = (
+    st.session_state.inspection_start_time
+)
 
 # =========================================================
 # CALCULATE CURRENT SHIFT
