@@ -302,6 +302,64 @@ status_shift = (
     f"{status_crew} - {status_shift_type}"
 )
 # =========================================================
+# GET CURRENT SHIFT PROCESS SUBMISSION STATUS
+# =========================================================
+
+process_status_response = (
+    supabase
+    .table("inspection_header")
+    .select("checklist_id, submission_type")
+    .eq("factory", factory)
+    .eq("shift_date", status_shift_date.isoformat())
+    .eq("shift", status_shift)
+    .eq("status", "SUBMITTED")
+    .execute()
+)
+
+process_status_records = (
+    process_status_response.data
+    or []
+)
+
+
+# ---------------------------------------------------------
+# NOT RUNNING PROCESSES
+# ---------------------------------------------------------
+
+status_not_running_processes = {
+    row["checklist_id"]
+    for row in process_status_records
+    if row.get("submission_type") == "NOT_RUNNING"
+}
+
+
+# ---------------------------------------------------------
+# NORMALLY COMPLETED PROCESSES
+# ---------------------------------------------------------
+
+status_completed_processes = {
+    row["checklist_id"]
+    for row in process_status_records
+    if row.get("submission_type") == "NORMAL"
+}
+
+
+# ---------------------------------------------------------
+# ADDITIONAL CREDIT AVAILABLE
+# ---------------------------------------------------------
+
+status_additional_used = sum(
+    1
+    for row in process_status_records
+    if row.get("submission_type") == "ADDITIONAL"
+)
+
+status_additional_available = max(
+    len(status_not_running_processes)
+    - status_additional_used,
+    0
+)
+# =========================================================
 # PROCESS SELECTION
 # =========================================================
 
@@ -311,24 +369,77 @@ area_checklists = [
     if row["area"] == area
 ]
 
-processes = sorted(
-    list(
-        set(
-            row["process"]
-            for row in area_checklists
+
+# ---------------------------------------------------------
+# BUILD PROCESS DISPLAY NAMES
+# ---------------------------------------------------------
+
+process_display_map = {}
+
+for row in area_checklists:
+
+    process_name = row["process"]
+    process_checklist_id = row["id"]
+
+    # Process already marked NOT RUNNING
+    if process_checklist_id in status_not_running_processes:
+
+        display_name = (
+            f"⛔ {process_name}"
         )
-    )
+
+    # Process already completed and no additional credit
+    elif (
+        process_checklist_id in status_completed_processes
+        and
+        status_additional_available <= 0
+    ):
+
+        display_name = (
+            f"✓ {process_name}"
+        )
+
+    # Not submitted OR additional credit available
+    else:
+
+        display_name = process_name
+
+    process_display_map[
+        display_name
+    ] = process_name
+
+
+# ---------------------------------------------------------
+# SORT BY REAL PROCESS NAME
+# ---------------------------------------------------------
+
+process_display_options = sorted(
+    process_display_map.keys(),
+    key=lambda display_name:
+        process_display_map[display_name]
 )
 
-process = st.selectbox(
+
+# ---------------------------------------------------------
+# PROCESS DROPDOWN
+# ---------------------------------------------------------
+
+selected_process_display = st.selectbox(
     "Process",
-    [""] + processes
+    [""] + process_display_options
 )
 
-if not process:
+if not selected_process_display:
     st.stop()
 
 
+# ---------------------------------------------------------
+# CONVERT DISPLAY NAME BACK TO REAL PROCESS NAME
+# ---------------------------------------------------------
+
+process = process_display_map[
+    selected_process_display
+]
 # =========================================================
 # FIND SELECTED CHECKLIST
 # =========================================================
