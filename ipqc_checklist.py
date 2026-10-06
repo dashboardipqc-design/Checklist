@@ -436,6 +436,35 @@ normal_submission_exists = bool(
 )
 
 # =========================================================
+# NORMAL SUBMISSION STATUS
+# =========================================================
+
+if normal_submission_exists:
+
+    existing_inspection_no = (
+        current_shift_response
+        .data[0]["inspection_no"]
+    )
+
+    st.warning(
+        "This process checklist has already been "
+        "submitted for the current shift."
+    )
+
+    st.info(
+        f"Existing Inspection No: "
+        f"{existing_inspection_no}"
+    )
+
+    st.caption(
+        f"Factory: {factory} | "
+        f"Shift Date: {shift_date.strftime('%d-%b-%Y')} | "
+        f"Shift: {shift}"
+    )
+
+    st.stop()
+    
+# =========================================================
 # INSPECTION INFORMATION
 # =========================================================
 
