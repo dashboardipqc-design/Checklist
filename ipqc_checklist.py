@@ -470,6 +470,20 @@ if normal_submission_exists:
 
 st.divider()
 
+# =========================================================
+# PROCESS RUNNING STATUS
+# =========================================================
+
+process_status = st.radio(
+    "Process Status",
+    [
+        "Running",
+        "Not Running"
+    ],
+    horizontal=True,
+    key=f"process_status_{factory}_{checklist_id}_{shift_date}_{shift}"
+)
+
 st.subheader(
     selected_checklist["checklist_name"]
 )
