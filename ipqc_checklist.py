@@ -705,10 +705,8 @@ if normal_submission_exists:
     else:
 
         st.error(
-            "🔴 Checklist Completed — "
-            "No additional credit available\n\n"
-            "This process has already been submitted "
-            "for the current shift."
+            "🔴 Checklist Completed."
+            "This process has already been submitted for the current shift."
         )
 
         st.stop()
