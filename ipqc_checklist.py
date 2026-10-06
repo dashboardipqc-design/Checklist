@@ -699,11 +699,7 @@ if normal_submission_exists:
         submission_mode = "ADDITIONAL"
 
         st.success(
-            f"🟢 Additional Submission — "
-            f"{additional_available} credit"
-            f"{'s' if additional_available != 1 else ''} available\n\n"
-            f"This checklist was already completed this shift. "
-            f"Submitting again will use 1 credit."
+            f"🟢 Additional Submission."
         )
 
     else:
