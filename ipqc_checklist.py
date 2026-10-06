@@ -1178,23 +1178,35 @@ if st.button(
     # =====================================================
 
     missing_header = []
+    invalid_header = []
 
     if not lot_number.strip():
+
         missing_header.append(
             "Lot Number"
         )
 
     if not machine.strip():
+
         missing_header.append(
             "Machine"
         )
 
     if not inspector.strip():
+
         missing_header.append(
             "Inspector Badge"
         )
 
+    elif (
+        not inspector.strip().isdigit()
+        or
+        len(inspector.strip()) != 6
+    ):
 
+        invalid_header.append(
+            "Inspector Badge must be exactly 6 digits."
+        )
     # =====================================================
     # VALIDATE CHECKLIST
     # =====================================================
@@ -1243,6 +1255,14 @@ if st.button(
             )
         )
 
+    elif invalid_header:
+
+        st.error(
+            " ".join(
+                invalid_header
+            )
+        )
+
     elif missing_items:
 
         st.error(
@@ -1255,7 +1275,6 @@ if st.button(
                 missing_items
             )
         )
-
 
     # =====================================================
     # SAVE INSPECTION
