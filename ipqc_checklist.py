@@ -490,11 +490,6 @@ additional_available = max(
     0
 )
 
-st.info(
-    f"Additional submission available: "
-    f"{additional_available}"
-)
-
 # =========================================================
 # DETERMINE SUBMISSION MODE
 # =========================================================
@@ -504,64 +499,25 @@ submission_mode = "NORMAL"
 
 if normal_submission_exists:
 
-    existing_inspection_no = (
-        current_shift_response
-        .data[0]["inspection_no"]
-    )
-
-    # -----------------------------------------------------
-    # ADDITIONAL CREDIT AVAILABLE
-    # -----------------------------------------------------
-
     if additional_available > 0:
 
         submission_mode = "ADDITIONAL"
 
-        st.warning(
-            "This process checklist has already been "
-            "submitted normally for the current shift."
-        )
-
-        st.info(
-            f"Existing Inspection No: "
-            f"{existing_inspection_no}"
-        )
-
         st.success(
-            f"Additional submission is available. "
-            f"Remaining credit: {additional_available}"
+            f"🟢 Additional Submission — "
+            f"{additional_available} credit"
+            f"{'s' if additional_available != 1 else ''} available\n\n"
+            f"This checklist was already completed this shift. "
+            f"Submitting again will use 1 credit."
         )
-
-        st.caption(
-            "This submission will use 1 additional "
-            "checklist credit."
-        )
-
-    # -----------------------------------------------------
-    # NO ADDITIONAL CREDIT AVAILABLE
-    # -----------------------------------------------------
 
     else:
 
-        st.warning(
-            "This process checklist has already been "
-            "submitted for the current shift."
-        )
-
-        st.info(
-            f"Existing Inspection No: "
-            f"{existing_inspection_no}"
-        )
-
         st.error(
-            "No additional checklist submission "
-            "credit is available."
-        )
-
-        st.caption(
-            f"Factory: {factory} | "
-            f"Shift Date: {shift_date.strftime('%d-%b-%Y')} | "
-            f"Shift: {shift}"
+            "🔴 Checklist Completed — "
+            "No additional credit available\n\n"
+            "This process has already been submitted "
+            "for the current shift."
         )
 
         st.stop()
