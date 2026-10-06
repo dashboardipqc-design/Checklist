@@ -402,7 +402,9 @@ for row in area_checklists:
     # Not submitted OR additional credit available
     else:
 
-        display_name = process_name
+        display_name = (
+            f"　 {process_name}"
+        )
 
     process_display_map[
         display_name
