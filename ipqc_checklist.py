@@ -962,7 +962,54 @@ if st.button(
     type="primary",
     use_container_width=True
 ):
+    # =====================================================
+    # RECHECK ADDITIONAL CREDIT BEFORE SUBMISSION
+    # =====================================================
 
+    if submission_mode == "ADDITIONAL":
+
+        latest_shift_response = (
+            supabase
+            .table("inspection_header")
+            .select("id, checklist_id, submission_type")
+            .eq("factory", factory)
+            .eq("shift_date", shift_date.isoformat())
+            .eq("shift", shift)
+            .eq("status", "SUBMITTED")
+            .execute()
+        )
+
+        latest_shift_records = (
+            latest_shift_response.data
+            or []
+        )
+
+        latest_not_running_processes = {
+            row["checklist_id"]
+            for row in latest_shift_records
+            if row.get("submission_type") == "NOT_RUNNING"
+        }
+
+        latest_additional_used = sum(
+            1
+            for row in latest_shift_records
+            if row.get("submission_type") == "ADDITIONAL"
+        )
+
+        latest_additional_available = max(
+            len(latest_not_running_processes)
+            - latest_additional_used,
+            0
+        )
+
+        if latest_additional_available <= 0:
+
+            st.error(
+                "Additional submission credit is no longer available. "
+                "Please refresh the checklist."
+            )
+
+            st.stop()
     # =====================================================
     # VALIDATE HEADER
     # Lot Number is optional
