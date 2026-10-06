@@ -371,20 +371,33 @@ area_checklists = [
 # ---------------------------------------------------------
 
 process_display_map = {}
+process_sort_map = {}
 
 for row in area_checklists:
 
     process_name = row["process"]
     process_checklist_id = row["id"]
 
-    # Process already marked NOT RUNNING
+
+    # -----------------------------------------------------
+    # NOT RUNNING
+    # Priority 3
+    # -----------------------------------------------------
+
     if process_checklist_id in status_not_running_processes:
 
         display_name = (
             f"❌ {process_name}"
         )
 
-    # Process already completed and no additional credit
+        status_priority = 3
+
+
+    # -----------------------------------------------------
+    # SUBMITTED
+    # Priority 2
+    # -----------------------------------------------------
+
     elif (
         process_checklist_id in status_completed_processes
         and
@@ -395,26 +408,43 @@ for row in area_checklists:
             f"✅ {process_name}"
         )
 
-    # Not submitted OR additional credit available
+        status_priority = 2
+
+
+    # -----------------------------------------------------
+    # AVAILABLE TO SUBMIT
+    # Includes additional-credit availability
+    # Priority 1
+    # -----------------------------------------------------
+
     else:
 
         display_name = (
             f"🔳 {process_name}"
         )
 
+        status_priority = 1
+
+
     process_display_map[
         display_name
     ] = process_name
 
+    process_sort_map[
+        display_name
+    ] = status_priority
+
 
 # ---------------------------------------------------------
-# SORT BY REAL PROCESS NAME
+# SORT BY STATUS, THEN PROCESS NAME
 # ---------------------------------------------------------
 
 process_display_options = sorted(
     process_display_map.keys(),
-    key=lambda display_name:
+    key=lambda display_name: (
+        process_sort_map[display_name],
         process_display_map[display_name]
+    )
 )
 
 
