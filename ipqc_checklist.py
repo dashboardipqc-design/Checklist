@@ -880,6 +880,7 @@ with col1:
 
     lot_number = st.text_input(
         "Lot Number"
+        placeholder="e.g. WCA5225"
     )
 
 with col2:
