@@ -484,6 +484,45 @@ process_status = st.radio(
     key=f"process_status_{factory}_{checklist_id}_{shift_date}_{shift}"
 )
 
+# =========================================================
+# NOT RUNNING PROCESS
+# =========================================================
+
+if process_status == "Not Running":
+
+    st.warning(
+        f"{process} is marked as NOT RUNNING "
+        f"for the current shift."
+    )
+
+    not_running_inspector = st.text_input(
+        "Inspector Badge",
+        placeholder="e.g. 505641",
+        key=f"not_running_inspector_{checklist_id}"
+    )
+
+    confirm_not_running = st.button(
+        "Confirm Not Running",
+        type="primary",
+        use_container_width=True
+    )
+
+    if confirm_not_running:
+
+        if not not_running_inspector.strip():
+
+            st.error(
+                "Please enter Inspector Badge."
+            )
+
+        else:
+
+            st.success(
+                "Not Running confirmation is ready."
+            )
+
+    st.stop()
+    
 st.subheader(
     selected_checklist["checklist_name"]
 )
