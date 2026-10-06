@@ -434,6 +434,27 @@ current_shift_response = (
 normal_submission_exists = bool(
     current_shift_response.data
 )
+
+# =========================================================
+# CHECK IF PROCESS ALREADY MARKED NOT RUNNING
+# =========================================================
+
+not_running_response = (
+    supabase
+    .table("inspection_header")
+    .select("id, inspection_no")
+    .eq("factory", factory)
+    .eq("checklist_id", checklist_id)
+    .eq("shift_date", shift_date.isoformat())
+    .eq("shift", shift)
+    .eq("submission_type", "NOT_RUNNING")
+    .eq("status", "SUBMITTED")
+    .execute()
+)
+
+process_already_not_running = bool(
+    not_running_response.data
+)
 # =========================================================
 # ADDITIONAL SUBMISSION CREDIT
 # =========================================================
@@ -489,7 +510,19 @@ additional_available = max(
     not_running_count - additional_used,
     0
 )
+# =========================================================
+# BLOCK PROCESS ALREADY MARKED NOT RUNNING
+# =========================================================
 
+if process_already_not_running:
+
+    st.warning(
+        f"🟡 Process Not Running\n\n"
+        f"{process} has already been marked "
+        f"Not Running for the current shift."
+    )
+
+    st.stop()
 # =========================================================
 # DETERMINE SUBMISSION MODE
 # =========================================================
