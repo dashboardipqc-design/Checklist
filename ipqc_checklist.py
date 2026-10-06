@@ -1095,6 +1095,7 @@ if st.button(
     type="primary",
     use_container_width=True
 ):
+
     # =====================================================
     # RECHECK ADDITIONAL CREDIT BEFORE SUBMISSION
     # =====================================================
@@ -1143,12 +1144,13 @@ if st.button(
             )
 
             st.stop()
+
+
     # =====================================================
     # VALIDATE HEADER
     # =====================================================
 
     missing_header = []
-
 
     if not lot_number.strip():
 
@@ -1156,19 +1158,24 @@ if st.button(
             "Lot Number"
         )
 
-
     if not machine.strip():
-    
+
         missing_header.append(
             "Machine"
         )
-
 
     if not inspector.strip():
 
         missing_header.append(
             "Inspector Badge"
         )
+
+
+    # =====================================================
+    # VALIDATE CHECKLIST
+    # =====================================================
+
+    missing_items = []
 
     for item in items:
 
@@ -1178,7 +1185,6 @@ if st.button(
                 item["id"]
             )
 
-
             if not answer:
 
                 missing_items.append(
@@ -1187,11 +1193,9 @@ if st.button(
 
                 continue
 
-
             value = (
                 answer["value"]
             )
-
 
             if (
                 value is None
@@ -1216,7 +1220,6 @@ if st.button(
                 missing_header
             )
         )
-
 
     elif missing_items:
 
@@ -1261,13 +1264,10 @@ if st.button(
                 .upper()
             )
 
-
             inspection_no = (
-
                 f"INS-"
                 f"{submitted_datetime.strftime('%Y%m%d-%H%M%S')}-"
                 f"{short_id}"
-
             )
 
 
@@ -1300,13 +1300,13 @@ if st.button(
 
                 "shift":
                     shift,
-                
+
                 "shift_date":
                     shift_date.isoformat(),
 
                 "submission_type":
                     submission_mode,
-                
+
                 "inspection_datetime":
                     inspection_datetime.isoformat(),
 
@@ -1316,7 +1316,6 @@ if st.button(
                 "submitted_at":
                     submitted_datetime.isoformat()
             }
-
 
             header_response = (
                 supabase
@@ -1329,13 +1328,11 @@ if st.button(
                 .execute()
             )
 
-
             if not header_response.data:
 
                 raise Exception(
                     "Inspection header was not created."
                 )
-
 
             inspection_id = (
                 header_response
@@ -1348,7 +1345,6 @@ if st.button(
             # =================================================
 
             result_rows = []
-
 
             for item in items:
 
@@ -1367,7 +1363,6 @@ if st.button(
                 value = (
                     answer["value"]
                 )
-
 
                 result_row = {
 
@@ -1440,9 +1435,7 @@ if st.button(
                         if value
 
                         else None
-
                     )
-
 
                 result_rows.append(
                     result_row
@@ -1473,11 +1466,9 @@ if st.button(
                 "Inspection submitted successfully."
             )
 
-
             st.info(
                 f"Inspection No: {inspection_no}"
             )
-
 
             st.write(
                 f"{len(result_rows)} "
@@ -1533,6 +1524,11 @@ if st.button(
                     use_container_width=True
                 )
 
+
+            # =================================================
+            # NO FAIL — REFRESH
+            # =================================================
+
             else:
 
                 time.sleep(1)
@@ -1548,6 +1544,7 @@ if st.button(
                 )
 
                 st.rerun()
+
 
         except Exception as e:
 
