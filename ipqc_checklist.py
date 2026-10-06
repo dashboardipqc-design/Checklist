@@ -396,7 +396,7 @@ for row in area_checklists:
     ):
 
         display_name = (
-            f"✓ {process_name}"
+            f"✅ {process_name}"
         )
 
     # Not submitted OR additional credit available
