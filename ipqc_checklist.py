@@ -279,7 +279,28 @@ def get_roster_crew(
         cycle_position
     ]
 
+# =========================================================
+# CURRENT OPERATIONAL SHIFT FOR PROCESS STATUS
+# =========================================================
 
+status_datetime = datetime.now(MALAYSIA_TZ)
+
+status_shift_date = get_shift_date(
+    status_datetime
+)
+
+status_shift_type = get_day_night(
+    status_datetime
+)
+
+status_crew = get_roster_crew(
+    status_shift_date,
+    status_shift_type
+)
+
+status_shift = (
+    f"{status_crew} - {status_shift_type}"
+)
 # =========================================================
 # PROCESS SELECTION
 # =========================================================
