@@ -434,6 +434,66 @@ current_shift_response = (
 normal_submission_exists = bool(
     current_shift_response.data
 )
+# =========================================================
+# ADDITIONAL SUBMISSION CREDIT
+# =========================================================
+
+shift_submission_response = (
+    supabase
+    .table("inspection_header")
+    .select("id, checklist_id, submission_type")
+    .eq("factory", factory)
+    .eq("shift_date", shift_date.isoformat())
+    .eq("shift", shift)
+    .eq("status", "SUBMITTED")
+    .execute()
+)
+
+shift_submission_records = (
+    shift_submission_response.data
+    or []
+)
+
+
+# ---------------------------------------------------------
+# COUNT UNIQUE NOT RUNNING PROCESSES
+# ---------------------------------------------------------
+
+not_running_processes = {
+    row["checklist_id"]
+    for row in shift_submission_records
+    if row.get("submission_type") == "NOT_RUNNING"
+}
+
+not_running_count = len(
+    not_running_processes
+)
+
+
+# ---------------------------------------------------------
+# COUNT ADDITIONAL SUBMISSIONS ALREADY USED
+# ---------------------------------------------------------
+
+additional_used = sum(
+    1
+    for row in shift_submission_records
+    if row.get("submission_type") == "ADDITIONAL"
+)
+
+
+# ---------------------------------------------------------
+# CALCULATE AVAILABLE ADDITIONAL CREDIT
+# ---------------------------------------------------------
+
+additional_available = max(
+    not_running_count - additional_used,
+    0
+)
+
+st.info(
+    f"Additional submission available: "
+    f"{additional_available}"
+)
 
 # =========================================================
 # NORMAL SUBMISSION STATUS
