@@ -879,7 +879,7 @@ col1, col2, col3 = st.columns(3)
 with col1:
 
     lot_number = st.text_input(
-        "Lot Number"
+        "Lot Number",
         placeholder="e.g. WCA5225"
     )
 
