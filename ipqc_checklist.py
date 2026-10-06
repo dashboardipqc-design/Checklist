@@ -1379,7 +1379,30 @@ if st.button(
             # FINDING ENTRY
             # =================================================
 
-                        else:
+            if failed_items:
+
+                st.warning(
+                    f"{len(failed_items)} failed "
+                    "checklist item(s) detected. "
+                    "Please raise a finding."
+                )
+
+                for failed_item in failed_items:
+
+                    st.write(
+                        f"• "
+                        f"{failed_item['item_code']} - "
+                        f"{failed_item['item_description']}"
+                    )
+
+                st.link_button(
+                    "Open IPQC Finding Entry",
+                    "https://ipqcchecklist.streamlit.app/",
+                    type="primary",
+                    use_container_width=True
+                )
+
+            else:
 
                 time.sleep(1)
 
