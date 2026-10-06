@@ -1142,26 +1142,32 @@ if st.button(
             )
 
             st.stop()
-    # =====================================================
-    # VALIDATE HEADER
-    # Lot Number is optional
-    # =====================================================
+# =====================================================
+# VALIDATE HEADER
+# =====================================================
 
-    missing_header = []
-
-
-    if not machine.strip():
-
-        missing_header.append(
-            "Machine"
-        )
+missing_header = []
 
 
-    if not inspector.strip():
+if not lot_number.strip():
 
-        missing_header.append(
-            "Inspector Badge"
-        )
+    missing_header.append(
+        "Lot Number"
+    )
+
+
+if not machine.strip():
+
+    missing_header.append(
+        "Machine"
+    )
+
+
+if not inspector.strip():
+
+    missing_header.append(
+        "Inspector Badge"
+    )
 
 
     # =====================================================
