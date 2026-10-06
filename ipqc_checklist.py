@@ -385,7 +385,7 @@ for row in area_checklists:
     if process_checklist_id in status_not_running_processes:
 
         display_name = (
-            f"⛔ {process_name}"
+            f"☒ {process_name}"
         )
 
     # Process already completed and no additional credit
@@ -396,7 +396,7 @@ for row in area_checklists:
     ):
 
         display_name = (
-            f"✅ {process_name}"
+            f"☑ {process_name}"
         )
 
     # Not submitted OR additional credit available
