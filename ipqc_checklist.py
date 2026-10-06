@@ -414,6 +414,26 @@ shift = (
     f"{crew} - {shift_type}"
 )
 
+# =========================================================
+# CHECK CURRENT SHIFT SUBMISSION
+# =========================================================
+
+current_shift_response = (
+    supabase
+    .table("inspection_header")
+    .select("id, inspection_no")
+    .eq("factory", factory)
+    .eq("checklist_id", checklist_id)
+    .eq("shift_date", shift_date.isoformat())
+    .eq("shift", shift)
+    .eq("submission_type", "NORMAL")
+    .eq("status", "SUBMITTED")
+    .execute()
+)
+
+normal_submission_exists = bool(
+    current_shift_response.data
+)
 
 # =========================================================
 # INSPECTION INFORMATION
