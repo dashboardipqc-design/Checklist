@@ -1143,40 +1143,32 @@ if st.button(
             )
 
             st.stop()
-# =====================================================
-# VALIDATE HEADER
-# =====================================================
-
-missing_header = []
-
-
-if not lot_number.strip():
-
-    missing_header.append(
-        "Lot Number"
-    )
-
-
-if not machine.strip():
-
-    missing_header.append(
-        "Machine"
-    )
-
-
-if not inspector.strip():
-
-    missing_header.append(
-        "Inspector Badge"
-    )
-
-
     # =====================================================
-    # VALIDATE CHECKLIST
+    # VALIDATE HEADER
     # =====================================================
 
-    missing_items = []
+    missing_header = []
 
+
+    if not lot_number.strip():
+
+        missing_header.append(
+            "Lot Number"
+        )
+
+
+    if not machine.strip():
+    
+        missing_header.append(
+            "Machine"
+        )
+
+
+    if not inspector.strip():
+
+        missing_header.append(
+            "Inspector Badge"
+        )
 
     for item in items:
 
