@@ -1086,6 +1086,7 @@ for item in items:
         unsafe_allow_html=True
     )
 
+
 # =========================================================
 # SUBMIT INSPECTION
 # =========================================================
@@ -1153,19 +1154,16 @@ if st.button(
     missing_header = []
 
     if not lot_number.strip():
-
         missing_header.append(
             "Lot Number"
         )
 
     if not machine.strip():
-
         missing_header.append(
             "Machine"
         )
 
     if not inspector.strip():
-
         missing_header.append(
             "Inspector Badge"
         )
@@ -1193,9 +1191,7 @@ if st.button(
 
                 continue
 
-            value = (
-                answer["value"]
-            )
+            value = answer["value"]
 
             if (
                 value is None
@@ -1319,12 +1315,8 @@ if st.button(
 
             header_response = (
                 supabase
-                .table(
-                    "inspection_header"
-                )
-                .insert(
-                    header_data
-                )
+                .table("inspection_header")
+                .insert(header_data)
                 .execute()
             )
 
@@ -1348,21 +1340,10 @@ if st.button(
 
             for item in items:
 
-                item_id = (
-                    item["id"]
-                )
-
-                answer = (
-                    answers[item_id]
-                )
-
-                input_type = (
-                    answer["type"]
-                )
-
-                value = (
-                    answer["value"]
-                )
+                item_id = item["id"]
+                answer = answers[item_id]
+                input_type = answer["type"]
+                value = answer["value"]
 
                 result_row = {
 
@@ -1388,52 +1369,25 @@ if st.button(
                         None
                 }
 
-
-                # ---------------------------------------------
-                # PASS / FAIL / N/A
-                # ---------------------------------------------
-
-                if (
-                    input_type
-                    == "PASS_FAIL_NA"
-                ):
+                if input_type == "PASS_FAIL_NA":
 
                     result_row[
                         "result"
                     ] = value
 
-
-                # ---------------------------------------------
-                # TEXT
-                # ---------------------------------------------
-
-                elif (
-                    input_type
-                    == "TEXT"
-                ):
+                elif input_type == "TEXT":
 
                     result_row[
                         "text_value"
                     ] = value
 
-
-                # ---------------------------------------------
-                # DATE
-                # ---------------------------------------------
-
-                elif (
-                    input_type
-                    == "DATE"
-                ):
+                elif input_type == "DATE":
 
                     result_row[
                         "date_value"
                     ] = (
-
                         value.isoformat()
-
                         if value
-
                         else None
                     )
 
@@ -1448,403 +1402,9 @@ if st.button(
 
             (
                 supabase
-                .table(
-                    "inspection_results"
-                )
-                .insert(
-                    result_rows
-                )
+                .table("inspection_results")
+                .insert(result_rows)
                 .execute()
-            )
-
-
-# =========================================================
-# SUBMIT INSPECTION
-# =========================================================
-
-if st.button(
-    "Submit Inspection",
-    type="primary",
-    use_container_width=True
-):
-
-    # =====================================================
-    # RECHECK ADDITIONAL CREDIT BEFORE SUBMISSION
-    # =====================================================
-
-    if submission_mode == "ADDITIONAL":
-
-        latest_shift_response = (
-            supabase
-            .table("inspection_header")
-            .select("id, checklist_id, submission_type")
-            .eq("factory", factory)
-            .eq("shift_date", shift_date.isoformat())
-            .eq("shift", shift)
-            .eq("status", "SUBMITTED")
-            .execute()
-        )
-
-        latest_shift_records = (
-            latest_shift_response.data
-            or []
-        )
-
-        latest_not_running_processes = {
-            row["checklist_id"]
-            for row in latest_shift_records
-            if row.get("submission_type") == "NOT_RUNNING"
-        }
-
-        latest_additional_used = sum(
-            1
-            for row in latest_shift_records
-            if row.get("submission_type") == "ADDITIONAL"
-        )
-
-        latest_additional_available = max(
-            len(latest_not_running_processes)
-            - latest_additional_used,
-            0
-        )
-
-        if latest_additional_available <= 0:
-
-            st.error(
-                "Additional submission credit is no longer available. "
-                "Please refresh the checklist."
-            )
-
-            st.stop()
-
-
-    # =====================================================
-    # VALIDATE HEADER
-    # =====================================================
-
-    missing_header = []
-
-    if not lot_number.strip():
-
-        missing_header.append(
-            "Lot Number"
-        )
-
-    if not machine.strip():
-
-        missing_header.append(
-            "Machine"
-        )
-
-    if not inspector.strip():
-
-        missing_header.append(
-            "Inspector Badge"
-        )
-
-
-    # =====================================================
-    # VALIDATE CHECKLIST
-    # =====================================================
-
-    missing_items = []
-
-    for item in items:
-
-        if item["required"]:
-
-            answer = answers.get(
-                item["id"]
-            )
-
-            if not answer:
-
-                missing_items.append(
-                    item["item_code"]
-                )
-
-                continue
-
-            value = (
-                answer["value"]
-            )
-
-            if (
-                value is None
-                or
-                value == ""
-            ):
-
-                missing_items.append(
-                    item["item_code"]
-                )
-
-
-    # =====================================================
-    # SHOW VALIDATION ERRORS
-    # =====================================================
-
-    if missing_header:
-
-        st.error(
-            "Please complete the inspection information: "
-            + ", ".join(
-                missing_header
-            )
-        )
-
-    elif missing_items:
-
-        st.error(
-            "Please complete all required checklist items."
-        )
-
-        st.write(
-            "Missing:",
-            ", ".join(
-                missing_items
-            )
-        )
-
-
-    # =====================================================
-    # SAVE INSPECTION
-    # =====================================================
-
-    else:
-
-        try:
-
-            # =================================================
-            # SUBMISSION DATE / TIME
-            # =================================================
-
-            submitted_datetime = (
-                datetime.now(
-                    MALAYSIA_TZ
-                )
-            )
-
-
-            # =================================================
-            # GENERATE UNIQUE INSPECTION NUMBER
-            # =================================================
-
-            short_id = (
-                uuid.uuid4()
-                .hex[:6]
-                .upper()
-            )
-
-            inspection_no = (
-                f"INS-"
-                f"{submitted_datetime.strftime('%Y%m%d-%H%M%S')}-"
-                f"{short_id}"
-            )
-
-
-            # =================================================
-            # INSERT INSPECTION HEADER
-            # =================================================
-
-            header_data = {
-
-                "inspection_no":
-                    inspection_no,
-
-                "factory":
-                    factory,
-
-                "checklist_id":
-                    checklist_id,
-
-                "version_id":
-                    version_id,
-
-                "lot_number":
-                    lot_number.strip(),
-
-                "machine":
-                    machine.strip(),
-
-                "inspector":
-                    inspector.strip(),
-
-                "shift":
-                    shift,
-
-                "shift_date":
-                    shift_date.isoformat(),
-
-                "submission_type":
-                    submission_mode,
-
-                "inspection_datetime":
-                    inspection_datetime.isoformat(),
-
-                "status":
-                    "SUBMITTED",
-
-                "submitted_at":
-                    submitted_datetime.isoformat()
-            }
-
-            header_response = (
-                supabase
-                .table(
-                    "inspection_header"
-                )
-                .insert(
-                    header_data
-                )
-                .execute()
-            )
-
-            if not header_response.data:
-
-                raise Exception(
-                    "Inspection header was not created."
-                )
-
-            inspection_id = (
-                header_response
-                .data[0]["id"]
-            )
-
-
-            # =================================================
-            # PREPARE INSPECTION RESULTS
-            # =================================================
-
-            result_rows = []
-
-            for item in items:
-
-                item_id = (
-                    item["id"]
-                )
-
-                answer = (
-                    answers[item_id]
-                )
-
-                input_type = (
-                    answer["type"]
-                )
-
-                value = (
-                    answer["value"]
-                )
-
-                result_row = {
-
-                    "inspection_id":
-                        inspection_id,
-
-                    "item_id":
-                        item_id,
-
-                    "result":
-                        None,
-
-                    "text_value":
-                        None,
-
-                    "numeric_value":
-                        None,
-
-                    "date_value":
-                        None,
-
-                    "remark":
-                        None
-                }
-
-
-                # ---------------------------------------------
-                # PASS / FAIL / N/A
-                # ---------------------------------------------
-
-                if (
-                    input_type
-                    == "PASS_FAIL_NA"
-                ):
-
-                    result_row[
-                        "result"
-                    ] = value
-
-
-                # ---------------------------------------------
-                # TEXT
-                # ---------------------------------------------
-
-                elif (
-                    input_type
-                    == "TEXT"
-                ):
-
-                    result_row[
-                        "text_value"
-                    ] = value
-
-
-                # ---------------------------------------------
-                # DATE
-                # ---------------------------------------------
-
-                elif (
-                    input_type
-                    == "DATE"
-                ):
-
-                    result_row[
-                        "date_value"
-                    ] = (
-
-                        value.isoformat()
-
-                        if value
-
-                        else None
-                    )
-
-                result_rows.append(
-                    result_row
-                )
-
-
-            # =================================================
-            # INSERT ALL RESULTS
-            # =================================================
-
-            (
-                supabase
-                .table(
-                    "inspection_results"
-                )
-                .insert(
-                    result_rows
-                )
-                .execute()
-            )
-
-
-            # =================================================
-            # SUCCESS
-            # =================================================
-
-            st.success(
-                "Inspection submitted successfully."
-            )
-
-            st.info(
-                f"Inspection No: {inspection_no}"
-            )
-
-            st.write(
-                f"{len(result_rows)} "
-                "inspection results saved."
             )
 
 
@@ -1870,22 +1430,21 @@ if st.button(
 
 
             # =================================================
-            # FINDING ENTRY
+            # SUBMISSION RESULT
             # =================================================
 
             if failed_items:
 
                 st.warning(
-                    f"{len(failed_items)} failed "
-                    "checklist item(s) detected. "
-                    "Please raise a finding."
+                    f"⚠️ {len(failed_items)} Failed "
+                    f"Checklist Item"
+                    f"{'s' if len(failed_items) != 1 else ''} Detected"
                 )
 
                 for failed_item in failed_items:
 
                     st.write(
-                        f"• "
-                        f"{failed_item['item_code']} - "
+                        f"**{failed_item['item_code']}** — "
                         f"{failed_item['item_description']}"
                     )
 
@@ -1896,12 +1455,11 @@ if st.button(
                     use_container_width=True
                 )
 
-
-            # =================================================
-            # NO FAIL — REFRESH
-            # =================================================
-
             else:
+
+                st.success(
+                    "Inspection submitted successfully."
+                )
 
                 time.sleep(1)
 
