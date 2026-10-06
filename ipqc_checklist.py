@@ -4,7 +4,6 @@ from datetime import datetime, date, timedelta
 from zoneinfo import ZoneInfo
 import uuid
 import time
-import streamlit.components.v1 as components
 
 # =========================================================
 # PAGE CONFIG
@@ -1524,7 +1523,7 @@ if not inspector.strip():
                 st.warning(
                     f"{len(failed_items)} failed "
                     "checklist item(s) detected. "
-                    "Redirecting to Finding Entry..."
+                    "Please raise a finding."
                 )
 
                 for failed_item in failed_items:
@@ -1535,20 +1534,11 @@ if not inspector.strip():
                         f"{failed_item['item_description']}"
                     )
 
-                time.sleep(1)
-
-                st.session_state.pop(
-                    "inspection_session_key",
-                    None
-                )
-
-                st.session_state.pop(
-                    "inspection_start_time",
-                    None
-                )
-
-                st.switch_page(
-                    "https://ipqcfinding.streamlit.app/"
+                st.link_button(
+                    "Open IPQC Finding Entry",
+                    "https://ipqcfinding.streamlit.app/",
+                    type="primary",
+                    use_container_width=True
                 )
 
             else:
@@ -1566,7 +1556,6 @@ if not inspector.strip():
                 )
 
                 st.rerun()
-
 
         except Exception as e:
 
