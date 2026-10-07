@@ -4,6 +4,7 @@ from datetime import datetime, date, timedelta
 from zoneinfo import ZoneInfo
 import uuid
 import time
+import streamlit.components.v1 as components
 
 # =========================================================
 # PAGE CONFIG
@@ -1662,62 +1663,32 @@ if submit_inspection:
                 # FINDING ENTRY BUTTON
                 # ---------------------------------------------
 
-                open_finding = st.button(
-                    "Open IPQC Finding Entry",
-                    type="primary",
-                    use_container_width=True,
-                    key="open_finding_entry_button"
+                # ---------------------------------------------
+                # FINDING ENTRY
+                # ---------------------------------------------
+
+                st.markdown(
+                    """
+                    <a
+                        href="https://ipqcfinding.streamlit.app/"
+                        target="_blank"
+                        style="
+                            display: block;
+                            width: 100%;
+                            padding: 0.55rem 0;
+                            text-align: center;
+                            text-decoration: none;
+                            border-radius: 0.5rem;
+                            background-color: #ff4b4b;
+                            color: white;
+                            font-weight: 600;
+                        "
+                    >
+                        Open IPQC Finding Entry
+                    </a>
+                    """,
+                    unsafe_allow_html=True
                 )
-
-                if open_finding:
-
-                    # -----------------------------------------
-                    # OPEN FINDING ENTRY IN NEW TAB
-                    # -----------------------------------------
-
-                    st.markdown(
-                        """
-                        <script>
-                            window.open(
-                                'https://ipqcfinding.streamlit.app/',
-                                '_blank'
-                            );
-                        </script>
-                        """,
-                        unsafe_allow_html=True
-                    )
-
-
-                    # -----------------------------------------
-                    # CLEAR CURRENT CHECKLIST SESSION
-                    # -----------------------------------------
-
-                    st.session_state.pop(
-                        submission_lock_key,
-                        None
-                    )
-
-                    st.session_state.pop(
-                        submission_result_key,
-                        None
-                    )
-
-                    st.session_state.pop(
-                        "inspection_session_key",
-                        None
-                    )
-
-                    st.session_state.pop(
-                        "inspection_start_time",
-                        None
-                    )
-
-
-                    # -----------------------------------------
-                    # REFRESH E-CHECKLIST
-                    # -----------------------------------------
-
-                    st.rerun()
 
 
             else:
