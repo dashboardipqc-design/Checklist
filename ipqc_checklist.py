@@ -1113,11 +1113,44 @@ for item in items:
 # SUBMIT INSPECTION
 # =========================================================
 
-if st.button(
-    "Submit Inspection",
+submission_lock_key = (
+    f"submission_locked_"
+    f"{factory}_"
+    f"{checklist_id}_"
+    f"{shift_date}_"
+    f"{shift}"
+)
+
+submission_locked = st.session_state.get(
+    submission_lock_key,
+    False
+)
+
+
+submit_inspection = st.button(
+    "Submitted ✓" if submission_locked else "Submit Inspection",
     type="primary",
-    use_container_width=True
-):
+    use_container_width=True,
+    disabled=submission_locked
+)
+
+
+if submit_inspection:
+
+    # =====================================================
+    # BLOCK DUPLICATE SUBMISSION FROM SAME LOADED PAGE
+    # =====================================================
+
+    if st.session_state.get(
+        submission_lock_key,
+        False
+    ):
+
+        st.error(
+            "This inspection has already been submitted."
+        )
+
+        st.stop()
 
     # =====================================================
     # RECHECK ADDITIONAL CREDIT BEFORE SUBMISSION
@@ -1447,6 +1480,16 @@ if st.button(
                 .insert(result_rows)
                 .execute()
             )
+
+
+            # =================================================
+            # LOCK SUCCESSFULLY SUBMITTED CHECKLIST
+            # PREVENT DUPLICATE SUBMISSION FROM SAME PAGE
+            # =================================================
+
+            st.session_state[
+                submission_lock_key
+            ] = True
 
 
             # =================================================
