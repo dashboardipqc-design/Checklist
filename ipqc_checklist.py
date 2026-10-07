@@ -1121,11 +1121,64 @@ submission_lock_key = (
     f"{shift}"
 )
 
+submission_result_key = (
+    f"submission_result_"
+    f"{factory}_"
+    f"{checklist_id}_"
+    f"{shift_date}_"
+    f"{shift}"
+)
+
+
 submission_locked = st.session_state.get(
     submission_lock_key,
     False
 )
 
+submission_result = st.session_state.get(
+    submission_result_key
+)
+
+
+# =========================================================
+# SHOW FAILED SUBMISSION RESULT
+# =========================================================
+
+if submission_locked and submission_result:
+
+    failed_items_saved = (
+        submission_result.get(
+            "failed_items",
+            []
+        )
+    )
+
+    if failed_items_saved:
+
+        st.warning(
+            f"⚠️ {len(failed_items_saved)} Failed "
+            f"Checklist Item"
+            f"{'s' if len(failed_items_saved) != 1 else ''} Detected"
+        )
+
+        for failed_item in failed_items_saved:
+
+            st.write(
+                f"**{failed_item['item_code']}** — "
+                f"{failed_item['item_description']}"
+            )
+
+        st.link_button(
+            "Open IPQC Finding Entry",
+            "https://ipqcfinding.streamlit.app/",
+            type="primary",
+            use_container_width=True
+        )
+
+
+# =========================================================
+# SUBMIT BUTTON
+# =========================================================
 
 submit_inspection = st.button(
     "Submitted ✓" if submission_locked else "Submit Inspection",
@@ -1151,6 +1204,11 @@ if submit_inspection:
         )
 
         st.stop()
+
+
+    # =====================================================
+    # RECHECK ADDITIONAL CREDIT BEFORE SUBMISSION
+    # =====================================================
 
     # =====================================================
     # RECHECK ADDITIONAL CREDIT BEFORE SUBMISSION
@@ -1519,28 +1577,38 @@ if submit_inspection:
 
             if failed_items:
 
-                st.warning(
-                    f"⚠️ {len(failed_items)} Failed "
-                    f"Checklist Item"
-                    f"{'s' if len(failed_items) != 1 else ''} Detected"
-                )
+                # ---------------------------------------------
+                # SAVE FAILED ITEMS FOR DISPLAY AFTER RERUN
+                # ---------------------------------------------
 
-                for failed_item in failed_items:
+                st.session_state[
+                    submission_result_key
+                ] = {
+                    "inspection_no":
+                        inspection_no,
 
-                    st.write(
-                        f"**{failed_item['item_code']}** — "
-                        f"{failed_item['item_description']}"
-                    )
+                    "failed_items": [
+                        {
+                            "item_code":
+                                failed_item["item_code"],
 
-                st.link_button(
-                    "Open IPQC Finding Entry",
-                    "https://ipqcfinding.streamlit.app/",
-                    type="primary",
-                    use_container_width=True
-                )
+                            "item_description":
+                                failed_item["item_description"]
+                        }
+                        for failed_item in failed_items
+                    ]
+                }
+
+
+                # ---------------------------------------------
+                # FORCE RERUN
+                # SUBMIT BUTTON WILL RETURN DISABLED
+                # ---------------------------------------------
+
+                st.rerun()
+
 
             else:
-
                 st.success(
                     "Inspection submitted successfully."
                 )
