@@ -1680,8 +1680,50 @@ if submit_inspection:
 
         except Exception as e:
 
-            st.error(
-                "Unable to submit inspection."
-            )
+            error_message = str(e)
 
-            st.exception(e)
+            # =================================================
+            # DUPLICATE NORMAL SUBMISSION
+            # Another device submitted the checklist first
+            # =================================================
+
+            if (
+                "uq_inspection_header_normal_submission"
+                in error_message
+            ):
+
+                st.warning(
+                    "🟢 Checklist Completed. "
+                    "This process has already been submitted "
+                    "for the current shift."
+                )
+
+
+            # =================================================
+            # ADDITIONAL CREDIT ALREADY CONSUMED
+            # Another device used the available credit first
+            # =================================================
+
+            elif (
+                "NO_ADDITIONAL_CREDIT"
+                in error_message
+            ):
+
+                st.warning(
+                    "⚠️ Additional submission credit is no "
+                    "longer available. Another submission may "
+                    "have used the available credit."
+                )
+
+
+            # =================================================
+            # OTHER UNEXPECTED ERROR
+            # =================================================
+
+            else:
+
+                st.error(
+                    "Unable to submit inspection. "
+                    "Please try again or contact Quality "
+                    "Engineering if the problem continues."
+                )
