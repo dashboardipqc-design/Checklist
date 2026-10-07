@@ -724,7 +724,8 @@ if normal_submission_exists:
 
     # -----------------------------------------------------
     # CURRENT PAGE HAS JUST SUBMITTED A FAILED CHECKLIST
-    # Allow page to continue so Finding Entry can be shown
+    # Keep the failed checklist locked on screen so the
+    # inspector can open Finding Entry.
     # -----------------------------------------------------
 
     if submission_locked and submission_result:
@@ -739,6 +740,21 @@ if normal_submission_exists:
     elif additional_available > 0:
 
         submission_mode = "ADDITIONAL"
+
+        # Previous NORMAL submission lock belongs to the
+        # earlier inspection, not this new ADDITIONAL one.
+        st.session_state.pop(
+            submission_lock_key,
+            None
+        )
+
+        st.session_state.pop(
+            submission_result_key,
+            None
+        )
+
+        submission_locked = False
+        submission_result = None
 
         st.success(
             "⚪ Additional Submission."
