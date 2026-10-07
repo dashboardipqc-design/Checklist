@@ -387,7 +387,7 @@ for row in area_checklists:
     if process_checklist_id in status_not_running_processes:
 
         display_name = (
-            f"❌ {process_name}"
+            f"🔴 {process_name}"
         )
 
         status_priority = 3
@@ -405,7 +405,7 @@ for row in area_checklists:
     ):
 
         display_name = (
-            f"✅ {process_name}"
+            f"🟢 {process_name}"
         )
 
         status_priority = 2
@@ -420,7 +420,7 @@ for row in area_checklists:
     else:
 
         display_name = (
-            f"🔳 {process_name}"
+            f"⚪ {process_name}"
         )
 
         status_priority = 1
