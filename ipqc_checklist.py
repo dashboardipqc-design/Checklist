@@ -849,7 +849,7 @@ if process_status == "Not Running":
                     # -------------------------------------------------
 
                     submitted_datetime = datetime.now(
-                        ZoneInfo("Asia/Kuala_Lumpur")
+                        MALAYSIA_TZ
                     )
 
                     inspection_no = (
@@ -896,9 +896,26 @@ if process_status == "Not Running":
 
             except Exception as e:
 
-                st.error(
-                    f"Unable to save Not Running status: {e}"
-                )
+                error_message = str(e)
+
+                if (
+                    "uq_inspection_header_not_running"
+                    in error_message
+                ):
+
+                    st.warning(
+                        "🔴 Process Not Running. "
+                        "This process has already been marked "
+                        "Not Running for the current shift."
+                    )
+
+                else:
+
+                    st.error(
+                        "Unable to save Not Running status. "
+                        "Please try again or contact Quality "
+                        "Engineering if the problem continues."
+                    )
 
     st.stop()
     
@@ -1545,12 +1562,6 @@ if submit_inspection:
                     "Inspection was not created."
                 )
 
-
-            inspection_id = (
-                rpc_response.data[0][
-                    "inspection_id"
-                ]
-            )
 
             # =================================================
             # LOCK SUCCESSFULLY SUBMITTED CHECKLIST
