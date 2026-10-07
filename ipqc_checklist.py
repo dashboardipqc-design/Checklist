@@ -577,6 +577,35 @@ shift = (
 )
 
 # =========================================================
+# SUBMISSION SESSION STATE
+# =========================================================
+
+submission_lock_key = (
+    f"submission_locked_"
+    f"{factory}_"
+    f"{checklist_id}_"
+    f"{shift_date}_"
+    f"{shift}"
+)
+
+submission_result_key = (
+    f"submission_result_"
+    f"{factory}_"
+    f"{checklist_id}_"
+    f"{shift_date}_"
+    f"{shift}"
+)
+
+submission_locked = st.session_state.get(
+    submission_lock_key,
+    False
+)
+
+submission_result = st.session_state.get(
+    submission_result_key
+)
+
+# =========================================================
 # CHECK CURRENT SHIFT SUBMISSION
 # =========================================================
 
@@ -692,13 +721,32 @@ submission_mode = "NORMAL"
 
 if normal_submission_exists:
 
-    if additional_available > 0:
+    # -----------------------------------------------------
+    # CURRENT PAGE HAS JUST SUBMITTED A FAILED CHECKLIST
+    # Allow page to continue so Finding Entry can be shown
+    # -----------------------------------------------------
+
+    if submission_locked and submission_result:
+
+        submission_mode = "NORMAL"
+
+
+    # -----------------------------------------------------
+    # ADDITIONAL SUBMISSION AVAILABLE
+    # -----------------------------------------------------
+
+    elif additional_available > 0:
 
         submission_mode = "ADDITIONAL"
 
         st.success(
-            f"⚪ Additional Submission."
+            "⚪ Additional Submission."
         )
+
+
+    # -----------------------------------------------------
+    # CHECKLIST ALREADY COMPLETED
+    # -----------------------------------------------------
 
     else:
 
@@ -1112,33 +1160,6 @@ for item in items:
 # =========================================================
 # SUBMIT INSPECTION
 # =========================================================
-
-submission_lock_key = (
-    f"submission_locked_"
-    f"{factory}_"
-    f"{checklist_id}_"
-    f"{shift_date}_"
-    f"{shift}"
-)
-
-submission_result_key = (
-    f"submission_result_"
-    f"{factory}_"
-    f"{checklist_id}_"
-    f"{shift_date}_"
-    f"{shift}"
-)
-
-
-submission_locked = st.session_state.get(
-    submission_lock_key,
-    False
-)
-
-submission_result = st.session_state.get(
-    submission_result_key
-)
-
 
 # =========================================================
 # SHOW FAILED SUBMISSION RESULT
