@@ -679,7 +679,7 @@ additional_available = max(
 if process_already_not_running:
 
     st.warning(
-        f"🟡 Process Not Running. This process has been marked not running for the current shift."
+        f"🔴 Process Not Running. This process has been marked not running for the current shift."
     )
 
     st.stop()
@@ -697,13 +697,13 @@ if normal_submission_exists:
         submission_mode = "ADDITIONAL"
 
         st.success(
-            f"🟢 Additional Submission."
+            f"⚪ Additional Submission."
         )
 
     else:
 
         st.error(
-            "🔴 Checklist Completed. "
+            "🟢 Checklist Completed. "
             "This process has already been submitted for the current shift."
         )
 
