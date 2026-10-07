@@ -1662,12 +1662,62 @@ if submit_inspection:
                 # FINDING ENTRY BUTTON
                 # ---------------------------------------------
 
-                st.link_button(
+                open_finding = st.button(
                     "Open IPQC Finding Entry",
-                    "https://ipqcfinding.streamlit.app/",
                     type="primary",
-                    use_container_width=True
+                    use_container_width=True,
+                    key="open_finding_entry_button"
                 )
+
+                if open_finding:
+
+                    # -----------------------------------------
+                    # OPEN FINDING ENTRY IN NEW TAB
+                    # -----------------------------------------
+
+                    st.markdown(
+                        """
+                        <script>
+                            window.open(
+                                'https://ipqcfinding.streamlit.app/',
+                                '_blank'
+                            );
+                        </script>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+
+                    # -----------------------------------------
+                    # CLEAR CURRENT CHECKLIST SESSION
+                    # -----------------------------------------
+
+                    st.session_state.pop(
+                        submission_lock_key,
+                        None
+                    )
+
+                    st.session_state.pop(
+                        submission_result_key,
+                        None
+                    )
+
+                    st.session_state.pop(
+                        "inspection_session_key",
+                        None
+                    )
+
+                    st.session_state.pop(
+                        "inspection_start_time",
+                        None
+                    )
+
+
+                    # -----------------------------------------
+                    # REFRESH E-CHECKLIST
+                    # -----------------------------------------
+
+                    st.rerun()
 
 
             else:
