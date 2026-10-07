@@ -4,7 +4,7 @@ from datetime import datetime, date, timedelta
 from zoneinfo import ZoneInfo
 import uuid
 import time
-import streamlit.components.v1 as components
+
 
 # =========================================================
 # PAGE CONFIG
@@ -1230,11 +1230,6 @@ if submit_inspection:
 
         st.stop()
 
-
-    # =====================================================
-    # RECHECK ADDITIONAL CREDIT BEFORE SUBMISSION
-    # =====================================================
-
     # =====================================================
     # RECHECK ADDITIONAL CREDIT BEFORE SUBMISSION
     # =====================================================
@@ -1658,14 +1653,6 @@ if submit_inspection:
                         f"{failed_item['item_description']}"
                     )
 
-
-                # ---------------------------------------------
-                # FINDING ENTRY BUTTON
-                # ---------------------------------------------
-
-                # ---------------------------------------------
-                # FINDING ENTRY
-                # ---------------------------------------------
 
                 # ---------------------------------------------
                 # FINDING ENTRY BUTTON
