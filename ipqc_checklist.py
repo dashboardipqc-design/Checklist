@@ -1418,72 +1418,6 @@ if submit_inspection:
                 f"{short_id}"
             )
 
-
-            # =================================================
-            # INSERT INSPECTION HEADER
-            # =================================================
-
-            header_data = {
-
-                "inspection_no":
-                    inspection_no,
-
-                "factory":
-                    factory,
-
-                "checklist_id":
-                    checklist_id,
-
-                "version_id":
-                    version_id,
-
-                "lot_number":
-                    lot_number.strip(),
-
-                "machine":
-                    machine.strip(),
-
-                "inspector":
-                    inspector.strip(),
-
-                "shift":
-                    shift,
-
-                "shift_date":
-                    shift_date.isoformat(),
-
-                "submission_type":
-                    submission_mode,
-
-                "inspection_datetime":
-                    inspection_datetime.isoformat(),
-
-                "status":
-                    "SUBMITTED",
-
-                "submitted_at":
-                    submitted_datetime.isoformat()
-            }
-
-            header_response = (
-                supabase
-                .table("inspection_header")
-                .insert(header_data)
-                .execute()
-            )
-
-            if not header_response.data:
-
-                raise Exception(
-                    "Inspection header was not created."
-                )
-
-            inspection_id = (
-                header_response
-                .data[0]["id"]
-            )
-
-
             # =================================================
             # PREPARE INSPECTION RESULTS
             # =================================================
@@ -1498,9 +1432,6 @@ if submit_inspection:
                 value = answer["value"]
 
                 result_row = {
-
-                    "inspection_id":
-                        inspection_id,
 
                     "item_id":
                         item_id,
@@ -1549,16 +1480,77 @@ if submit_inspection:
 
 
             # =================================================
-            # INSERT ALL RESULTS
+            # ATOMIC DATABASE SUBMISSION
+            # Header + Results are saved in one transaction.
+            # Additional credit is validated and consumed
+            # inside PostgreSQL.
             # =================================================
 
-            (
+            rpc_response = (
                 supabase
-                .table("inspection_results")
-                .insert(result_rows)
+                .rpc(
+                    "submit_ipqc_inspection",
+                    {
+                        "p_inspection_no":
+                            inspection_no,
+
+                        "p_factory":
+                            factory,
+
+                        "p_checklist_id":
+                            checklist_id,
+
+                        "p_version_id":
+                            version_id,
+
+                        "p_lot_number":
+                            lot_number.strip(),
+
+                        "p_machine":
+                            machine.strip(),
+
+                        "p_inspector":
+                            inspector.strip(),
+
+                        "p_shift":
+                            shift,
+
+                        "p_shift_date":
+                            shift_date.isoformat(),
+
+                        "p_submission_type":
+                            submission_mode,
+
+                        "p_inspection_datetime":
+                            inspection_datetime.isoformat(),
+
+                        "p_submitted_at":
+                            submitted_datetime.isoformat(),
+
+                        "p_results":
+                            result_rows
+                    }
+                )
                 .execute()
             )
 
+
+            # =================================================
+            # VERIFY DATABASE SUBMISSION
+            # =================================================
+
+            if not rpc_response.data:
+
+                raise Exception(
+                    "Inspection was not created."
+                )
+
+
+            inspection_id = (
+                rpc_response.data[0][
+                    "inspection_id"
+                ]
+            )
 
             # =================================================
             # LOCK SUCCESSFULLY SUBMITTED CHECKLIST
