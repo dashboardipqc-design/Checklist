@@ -1201,11 +1201,14 @@ if submission_locked and submission_result:
 # SUBMIT BUTTON
 # =========================================================
 
-submit_inspection = st.button(
+submit_button_placeholder = st.empty()
+
+submit_inspection = submit_button_placeholder.button(
     "Submitted ✓" if submission_locked else "Submit Inspection",
     type="primary",
     use_container_width=True,
-    disabled=submission_locked
+    disabled=submission_locked,
+    key="submit_inspection_button"
 )
 
 
@@ -1599,7 +1602,7 @@ if submit_inspection:
             if failed_items:
 
                 # ---------------------------------------------
-                # SAVE FAILED ITEMS FOR DISPLAY AFTER RERUN
+                # SAVE FAILED ITEMS
                 # ---------------------------------------------
 
                 st.session_state[
@@ -1622,11 +1625,49 @@ if submit_inspection:
 
 
                 # ---------------------------------------------
-                # FORCE RERUN
-                # SUBMIT BUTTON WILL RETURN DISABLED
+                # REPLACE ACTIVE SUBMIT BUTTON WITH DISABLED
+                # BUTTON — NO PAGE RERUN
                 # ---------------------------------------------
 
-                st.rerun()
+                submit_button_placeholder.empty()
+
+                submit_button_placeholder.button(
+                    "Submitted ✓",
+                    type="primary",
+                    use_container_width=True,
+                    disabled=True,
+                    key="submit_inspection_button_disabled"
+                )
+
+
+                # ---------------------------------------------
+                # SHOW FAILED ITEMS
+                # ---------------------------------------------
+
+                st.warning(
+                    f"⚠️ {len(failed_items)} Failed "
+                    f"Checklist Item"
+                    f"{'s' if len(failed_items) != 1 else ''} Detected"
+                )
+
+                for failed_item in failed_items:
+
+                    st.write(
+                        f"**{failed_item['item_code']}** — "
+                        f"{failed_item['item_description']}"
+                    )
+
+
+                # ---------------------------------------------
+                # FINDING ENTRY BUTTON
+                # ---------------------------------------------
+
+                st.link_button(
+                    "Open IPQC Finding Entry",
+                    "https://ipqcfinding.streamlit.app/",
+                    type="primary",
+                    use_container_width=True
+                )
 
 
             else:
