@@ -1667,27 +1667,15 @@ if submit_inspection:
                 # FINDING ENTRY
                 # ---------------------------------------------
 
-                st.markdown(
-                    """
-                    <a
-                        href="https://ipqcfinding.streamlit.app/"
-                        target="_blank"
-                        style="
-                            display: block;
-                            width: 100%;
-                            padding: 0.55rem 0;
-                            text-align: center;
-                            text-decoration: none;
-                            border-radius: 0.5rem;
-                            background-color: #ff4b4b;
-                            color: white;
-                            font-weight: 600;
-                        "
-                    >
-                        Open IPQC Finding Entry
-                    </a>
-                    """,
-                    unsafe_allow_html=True
+                # ---------------------------------------------
+                # FINDING ENTRY BUTTON
+                # ---------------------------------------------
+
+                st.link_button(
+                    "Open IPQC Finding Entry",
+                    "https://ipqcfinding.streamlit.app/",
+                    type="primary",
+                    use_container_width=True
                 )
 
 
