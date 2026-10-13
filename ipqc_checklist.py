@@ -1230,11 +1230,11 @@ if failed_items_current:
 
 
     finding_categories = [
-        "Method / Handling",
-        "Machine / Facility",
-        "Material / Product",
-        "Document / Record",
-        "Personnel Compliance"
+        "Method / Handling - Incorrect process execution, setup, or operating method",
+        "Machine / Facility - Ionizer, machine abnormal reading, equipment/facility condition",
+        "Man / Personnel Compliance - Not following cleanroom, 5S, ESD, discipline requirement",
+        "Material / Product - Material condition, expiry, identification, mixed material",
+        "Document / Record - Checklist, record, label, traceability, or documentation"
     ]
 
 
