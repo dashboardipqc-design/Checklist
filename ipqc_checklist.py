@@ -1000,10 +1000,10 @@ with col_shift:
 
 
 # =========================================================
-# LOT / MACHINE / INSPECTOR
+# LOT / MACHINE / INSPECTOR / AUDITEE
 # =========================================================
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
 
 with col1:
 
@@ -1026,6 +1026,12 @@ with col3:
         placeholder="e.g. 505641"
     )
 
+with col4:
+
+    auditee = st.text_input(
+        "Auditee Badge",
+        placeholder="e.g. 505641"
+    )
 
 # =========================================================
 # CHECKLIST FORM
@@ -1459,6 +1465,24 @@ if submit_inspection:
         invalid_header.append(
             "Inspector Badge must be six (6) numerical digits."
         )
+
+
+    if not auditee.strip():
+
+        missing_header.append(
+            "Auditee Badge"
+        )
+
+    elif (
+        not auditee.strip().isdigit()
+        or
+        len(auditee.strip()) != 6
+    ):
+
+        invalid_header.append(
+            "Auditee Badge must be six (6) numerical digits."
+        )
+        
     # =====================================================
     # VALIDATE CHECKLIST
     # =====================================================
@@ -1718,6 +1742,9 @@ if submit_inspection:
 
                         "station":
                             process,
+
+                        "auditee":
+                            auditee.strip(),
 
                         "item_code":
                             failed_item["item_code"],
