@@ -1517,63 +1517,64 @@ if submit_inspection:
                     item["item_code"]
                 )
 
-# =====================================================
-# VALIDATE FINDING INFORMATION
-# =====================================================
+    # =====================================================
+    # VALIDATE FINDING INFORMATION
+    # =====================================================
 
-missing_finding_fields = []
-
-
-for failed_item in failed_items_current:
-
-    failed_item_id = failed_item["id"]
-    failed_item_code = failed_item["item_code"]
-
-    finding_entry = finding_entries.get(
-        failed_item_id,
-        {}
-    )
+    missing_finding_fields = []
 
 
-    if not finding_entry.get(
-        "category",
-        ""
-    ).strip():
+    for failed_item in failed_items_current:
 
-        missing_finding_fields.append(
-            f"{failed_item_code} - Category"
+        failed_item_id = failed_item["id"]
+        failed_item_code = failed_item["item_code"]
+
+        finding_entry = finding_entries.get(
+            failed_item_id,
+            {}
         )
 
 
-    if not finding_entry.get(
-        "finding_description",
-        ""
-    ).strip():
+        if not finding_entry.get(
+            "category",
+            ""
+        ).strip():
 
-        missing_finding_fields.append(
-            f"{failed_item_code} - Finding Description"
-        )
-
-
-    if not finding_entry.get(
-        "interview_result",
-        ""
-    ).strip():
-
-        missing_finding_fields.append(
-            f"{failed_item_code} - Interview Result"
-        )
+            missing_finding_fields.append(
+                f"{failed_item_code} - Category"
+            )
 
 
-    if not finding_entry.get(
-        "containment_action",
-        ""
-    ).strip():
+        if not finding_entry.get(
+            "finding_description",
+            ""
+        ).strip():
 
-        missing_finding_fields.append(
-            f"{failed_item_code} - Containment Action"
-        )
-        
+            missing_finding_fields.append(
+                f"{failed_item_code} - Finding Description"
+            )
+
+
+        if not finding_entry.get(
+            "interview_result",
+            ""
+        ).strip():
+
+            missing_finding_fields.append(
+                f"{failed_item_code} - Interview Result"
+            )
+
+
+        if not finding_entry.get(
+            "containment_action",
+            ""
+        ).strip():
+
+            missing_finding_fields.append(
+                f"{failed_item_code} - Containment Action"
+            )
+
+
     # =====================================================
     # SHOW VALIDATION ERRORS
     # =====================================================
@@ -1587,6 +1588,7 @@ for failed_item in failed_items_current:
             )
         )
 
+
     elif invalid_header:
 
         st.error(
@@ -1594,6 +1596,7 @@ for failed_item in failed_items_current:
                 invalid_header
             )
         )
+
 
     elif missing_items:
 
@@ -1607,19 +1610,21 @@ for failed_item in failed_items_current:
                 missing_items
             )
         )
-elif missing_finding_fields:
 
-    st.error(
-        "Please complete all Finding information "
-        "for the failed checklist item(s)."
-    )
 
-    st.write(
-        "Missing:",
-        ", ".join(
-            missing_finding_fields
+    elif missing_finding_fields:
+
+        st.error(
+            "Please complete all Finding information "
+            "for the failed checklist item(s)."
         )
-    )
+
+        st.write(
+            "Missing:",
+            ", ".join(
+                missing_finding_fields
+            )
+        )
     # =====================================================
     # SAVE INSPECTION
     # =====================================================
