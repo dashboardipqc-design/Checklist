@@ -1289,18 +1289,25 @@ if failed_items_current:
 
             finding_description = st.text_area(
                 "Finding Description",
+                placeholder=(
+                    "During [when], [what] was observed at [where]. "
+                    "This does not meet [requirement]. "
+                    "Acknowledged by [supervisor/leader]."
+                ),
                 key=f"finding_description_{failed_item_id}"
             )
 
 
             interview_result = st.text_area(
                 "Interview Result",
+                placeholder="Enter explanation from auditee or supervisor",
                 key=f"finding_interview_{failed_item_id}"
             )
 
 
             containment_action = st.text_area(
                 "Containment Action",
+                placeholder="Enter immediate containment action taken",
                 key=f"finding_containment_{failed_item_id}"
             )
 
