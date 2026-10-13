@@ -1215,7 +1215,118 @@ for item in items:
         unsafe_allow_html=True
     )
 
+# =========================================================
+# FINDING INFORMATION FOR FAILED ITEMS
+# =========================================================
 
+failed_items_current = [
+
+    item
+    for item in items
+
+    if (
+        answers.get(item["id"], {}).get("type")
+        == "PASS_FAIL_NA"
+
+        and
+
+        answers.get(item["id"], {}).get("value")
+        == "Fail"
+    )
+]
+
+
+finding_entries = {}
+
+
+if failed_items_current:
+
+    st.divider()
+
+    st.subheader(
+        "Failed Audit Finding"
+    )
+
+    st.caption(
+        "Complete the Finding information for each failed checklist item."
+    )
+
+
+    finding_categories = [
+        "Method / Handling",
+        "Machine / Facility",
+        "Material / Product",
+        "Document / Record",
+        "Personnel Compliance"
+    ]
+
+
+    for failed_item in failed_items_current:
+
+        failed_item_id = failed_item["id"]
+        failed_item_code = failed_item["item_code"]
+        failed_item_description = failed_item["item_description"]
+
+
+        with st.container(border=True):
+
+            st.markdown(
+                "#### Item below failed audit"
+            )
+
+            st.markdown(
+                f"**{failed_item_code} - "
+                f"{failed_item_description}**"
+            )
+
+
+            category = st.selectbox(
+                "Category",
+                [""] + finding_categories,
+                key=f"finding_category_{failed_item_id}"
+            )
+
+
+            finding_description = st.text_area(
+                "Finding Description",
+                key=f"finding_description_{failed_item_id}"
+            )
+
+
+            interview_result = st.text_area(
+                "Interview Result",
+                key=f"finding_interview_{failed_item_id}"
+            )
+
+
+            containment_action = st.text_area(
+                "Containment Action",
+                key=f"finding_containment_{failed_item_id}"
+            )
+
+
+            finding_entries[
+                failed_item_id
+            ] = {
+
+                "item_code":
+                    failed_item_code,
+
+                "item_description":
+                    failed_item_description,
+
+                "category":
+                    category,
+
+                "finding_description":
+                    finding_description,
+
+                "interview_result":
+                    interview_result,
+
+                "containment_action":
+                    containment_action
+            }
 # =========================================================
 # SUBMIT INSPECTION
 # =========================================================
@@ -1406,7 +1517,63 @@ if submit_inspection:
                     item["item_code"]
                 )
 
+# =====================================================
+# VALIDATE FINDING INFORMATION
+# =====================================================
 
+missing_finding_fields = []
+
+
+for failed_item in failed_items_current:
+
+    failed_item_id = failed_item["id"]
+    failed_item_code = failed_item["item_code"]
+
+    finding_entry = finding_entries.get(
+        failed_item_id,
+        {}
+    )
+
+
+    if not finding_entry.get(
+        "category",
+        ""
+    ).strip():
+
+        missing_finding_fields.append(
+            f"{failed_item_code} - Category"
+        )
+
+
+    if not finding_entry.get(
+        "finding_description",
+        ""
+    ).strip():
+
+        missing_finding_fields.append(
+            f"{failed_item_code} - Finding Description"
+        )
+
+
+    if not finding_entry.get(
+        "interview_result",
+        ""
+    ).strip():
+
+        missing_finding_fields.append(
+            f"{failed_item_code} - Interview Result"
+        )
+
+
+    if not finding_entry.get(
+        "containment_action",
+        ""
+    ).strip():
+
+        missing_finding_fields.append(
+            f"{failed_item_code} - Containment Action"
+        )
+        
     # =====================================================
     # SHOW VALIDATION ERRORS
     # =====================================================
@@ -1440,7 +1607,19 @@ if submit_inspection:
                 missing_items
             )
         )
+elif missing_finding_fields:
 
+    st.error(
+        "Please complete all Finding information "
+        "for the failed checklist item(s)."
+    )
+
+    st.write(
+        "Missing:",
+        ", ".join(
+            missing_finding_fields
+        )
+    )
     # =====================================================
     # SAVE INSPECTION
     # =====================================================
