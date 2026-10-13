@@ -1014,6 +1014,16 @@ current_section = None
 
 answers = {}
 
+finding_entries = {}
+
+finding_categories = [
+    "Method / Handling - Incorrect process execution, setup, or operating method",
+    "Machine / Facility - Ionizer, machine abnormal reading, equipment/facility condition",
+    "Man / Personnel Compliance - Not following cleanroom, 5S, ESD, discipline requirement",
+    "Material / Product - Material condition, expiry, identification, mixed material",
+    "Document / Record - Checklist, record, label, traceability, or documentation"
+]
+
 
 for item in items:
 
@@ -1183,6 +1193,79 @@ for item in items:
         }
 
 
+    # =====================================================
+    # FINDING INFORMATION
+    # Display directly below the failed checklist item
+    # =====================================================
+
+    if (
+        input_type == "PASS_FAIL_NA"
+        and
+        answers[item_id]["value"] == "Fail"
+    ):
+
+        with st.container(border=True):
+
+            st.markdown(
+                f"#### ⚠ Finding — {item_code}"
+            )
+
+            category = st.selectbox(
+                "Category",
+                [""] + finding_categories,
+                key=f"finding_category_{item_id}"
+            )
+
+            finding_description = st.text_area(
+                "Finding Description",
+                placeholder=(
+                    "During [when], [what] was observed at [where]. "
+                    "This does not meet [requirement]. "
+                    "Acknowledged by [supervisor/leader]."
+                ),
+                height=90,
+                key=f"finding_description_{item_id}"
+            )
+
+            interview_result = st.text_area(
+                "Interview Result",
+                placeholder=(
+                    "Enter explanation from auditee or supervisor"
+                ),
+                height=90,
+                key=f"finding_interview_{item_id}"
+            )
+
+            containment_action = st.text_area(
+                "Containment Action",
+                placeholder=(
+                    "Enter immediate containment action taken"
+                ),
+                height=90,
+                key=f"finding_containment_{item_id}"
+            )
+
+            finding_entries[item_id] = {
+                "item_code":
+                    item_code,
+
+                "item_description":
+                    description,
+
+                "category":
+                    category,
+
+                "finding_description":
+                    finding_description,
+
+                "interview_result":
+                    interview_result,
+
+                "containment_action":
+                    containment_action
+            }
+
+
     # -----------------------------------------------------
     # COMPACT ITEM DIVIDER
     # -----------------------------------------------------
@@ -1193,7 +1276,8 @@ for item in items:
     )
 
 # =========================================================
-# FINDING INFORMATION FOR FAILED ITEMS
+# FAILED CHECKLIST ITEMS
+# Used for validation and Finding submission
 # =========================================================
 
 failed_items_current = [
@@ -1212,108 +1296,6 @@ failed_items_current = [
     )
 ]
 
-
-finding_entries = {}
-
-
-if failed_items_current:
-
-    st.divider()
-
-    st.subheader(
-        "Failed Audit Finding"
-    )
-
-    st.caption(
-        "Complete the Finding information for each failed checklist item."
-    )
-
-
-    finding_categories = [
-        "Method / Handling - Incorrect process execution, setup, or operating method",
-        "Machine / Facility - Ionizer, machine abnormal reading, equipment/facility condition",
-        "Man / Personnel Compliance - Not following cleanroom, 5S, ESD, discipline requirement",
-        "Material / Product - Material condition, expiry, identification, mixed material",
-        "Document / Record - Checklist, record, label, traceability, or documentation"
-    ]
-
-
-    for failed_item in failed_items_current:
-
-        failed_item_id = failed_item["id"]
-        failed_item_code = failed_item["item_code"]
-        failed_item_description = failed_item["item_description"]
-
-
-        with st.container(border=True):
-
-            st.markdown(
-                "#### Item below failed audit"
-            )
-
-            st.markdown(
-                f"**{failed_item_code} - "
-                f"{failed_item_description}**"
-            )
-
-
-            category = st.selectbox(
-                "Category",
-                [""] + finding_categories,
-                key=f"finding_category_{failed_item_id}"
-            )
-
-
-            finding_description = st.text_area(
-                "Finding Description",
-                placeholder=(
-                    "During [when], [what] was observed at [where]. "
-                    "This does not meet [requirement]. "
-                    "Acknowledged by [supervisor/leader]."
-                ),
-                height=90,
-                key=f"finding_description_{failed_item_id}"
-            )
-
-
-            interview_result = st.text_area(
-                "Interview Result",
-                placeholder="Enter explanation from auditee or supervisor",
-                height=90,
-                key=f"finding_interview_{failed_item_id}"
-            )
-
-
-            containment_action = st.text_area(
-                "Containment Action",
-                placeholder="Enter immediate containment action taken",
-                height=90,
-                key=f"finding_containment_{failed_item_id}"
-            )
-
-
-            finding_entries[
-                failed_item_id
-            ] = {
-
-                "item_code":
-                    failed_item_code,
-
-                "item_description":
-                    failed_item_description,
-
-                "category":
-                    category,
-
-                "finding_description":
-                    finding_description,
-
-                "interview_result":
-                    interview_result,
-
-                "containment_action":
-                    containment_action
-            }
 # =========================================================
 # SUBMIT INSPECTION
 # =========================================================
