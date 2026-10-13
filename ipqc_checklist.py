@@ -614,21 +614,9 @@ submission_lock_key = (
     f"{shift}"
 )
 
-submission_result_key = (
-    f"submission_result_"
-    f"{factory}_"
-    f"{checklist_id}_"
-    f"{shift_date}_"
-    f"{shift}"
-)
-
 submission_locked = st.session_state.get(
     submission_lock_key,
     False
-)
-
-submission_result = st.session_state.get(
-    submission_result_key
 )
 
 # =========================================================
@@ -748,21 +736,10 @@ submission_mode = "NORMAL"
 if normal_submission_exists:
 
     # -----------------------------------------------------
-    # CURRENT PAGE HAS JUST SUBMITTED A FAILED CHECKLIST
-    # Keep the failed checklist locked on screen so the
-    # inspector can open Finding Entry.
-    # -----------------------------------------------------
-
-    if submission_locked and submission_result:
-
-        submission_mode = "NORMAL"
-
-
-    # -----------------------------------------------------
     # ADDITIONAL SUBMISSION AVAILABLE
     # -----------------------------------------------------
 
-    elif additional_available > 0:
+    if additional_available > 0:
 
         submission_mode = "ADDITIONAL"
 
@@ -773,13 +750,7 @@ if normal_submission_exists:
             None
         )
 
-        st.session_state.pop(
-            submission_result_key,
-            None
-        )
-
         submission_locked = False
-        submission_result = None
 
         st.success(
             "⚪ Additional Submission."
