@@ -1719,7 +1719,55 @@ if submit_inspection:
                 result_rows.append(
                     result_row
                 )
+            # =================================================
+            # PREPARE FINDINGS FOR FAILED CHECKLIST ITEMS
+            # =================================================
 
+            finding_rows = []
+
+
+            for failed_item in failed_items_current:
+
+                failed_item_id = failed_item["id"]
+
+                finding_entry = finding_entries[
+                    failed_item_id
+                ]
+
+
+                finding_rows.append(
+                    {
+                        "area":
+                            area,
+
+                        "station":
+                            process,
+
+                        "item_code":
+                            failed_item["item_code"],
+
+                        "item_description":
+                            failed_item["item_description"],
+
+                        "category":
+                            finding_entry["category"].strip(),
+
+                        "finding_description":
+                            finding_entry[
+                                "finding_description"
+                            ].strip(),
+
+                        "interview_result":
+                            finding_entry[
+                                "interview_result"
+                            ].strip(),
+
+                        "containment_action":
+                            finding_entry[
+                                "containment_action"
+                            ].strip()
+                    }
+                )
 
             # =================================================
             # ATOMIC DATABASE SUBMISSION
@@ -1770,7 +1818,10 @@ if submit_inspection:
                             submitted_datetime.isoformat(),
 
                         "p_results":
-                            result_rows
+                            result_rows,
+
+                        "p_findings":
+                            finding_rows
                     }
                 )
                 .execute()
