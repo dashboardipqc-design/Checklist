@@ -1294,6 +1294,7 @@ if failed_items_current:
                     "This does not meet [requirement]. "
                     "Acknowledged by [supervisor/leader]."
                 ),
+                height=90,
                 key=f"finding_description_{failed_item_id}"
             )
 
@@ -1301,6 +1302,7 @@ if failed_items_current:
             interview_result = st.text_area(
                 "Interview Result",
                 placeholder="Enter explanation from auditee or supervisor",
+                height=90,
                 key=f"finding_interview_{failed_item_id}"
             )
 
@@ -1308,6 +1310,7 @@ if failed_items_current:
             containment_action = st.text_area(
                 "Containment Action",
                 placeholder="Enter immediate containment action taken",
+                height=90,
                 key=f"finding_containment_{failed_item_id}"
             )
 
