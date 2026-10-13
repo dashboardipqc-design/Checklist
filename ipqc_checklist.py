@@ -16,8 +16,30 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("📋 IPQC Audit Checklist")
+# =========================================================
+# HEADER
+# =========================================================
 
+header_title, header_finding = st.columns(
+    [8, 1]
+)
+
+with header_title:
+
+    st.title(
+        "📋 IPQC Audit Checklist"
+    )
+
+
+with header_finding:
+
+    st.write("")
+
+    st.link_button(
+        "Finding",
+        "https://ipqcfinding.streamlit.app/",
+        width="stretch"
+    )
 
 # =========================================================
 # COMPACT CHECKLIST UI
