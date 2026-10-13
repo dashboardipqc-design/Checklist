@@ -33,7 +33,10 @@ with header_title:
 
 with header_finding:
 
-    st.write("")
+    st.markdown(
+        "<div style='height: 22px;'></div>",
+        unsafe_allow_html=True
+    )
 
     st.link_button(
         "Finding",
