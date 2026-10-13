@@ -1331,40 +1331,6 @@ if failed_items_current:
 # SUBMIT INSPECTION
 # =========================================================
 
-# =========================================================
-# SHOW FAILED SUBMISSION RESULT
-# =========================================================
-
-if submission_locked and submission_result:
-
-    failed_items_saved = (
-        submission_result.get(
-            "failed_items",
-            []
-        )
-    )
-
-    if failed_items_saved:
-
-        st.warning(
-            f"⚠️ {len(failed_items_saved)} Failed "
-            f"Checklist Item"
-            f"{'s' if len(failed_items_saved) != 1 else ''} Detected"
-        )
-
-        for failed_item in failed_items_saved:
-
-            st.write(
-                f"**{failed_item['item_code']}** — "
-                f"{failed_item['item_description']}"
-            )
-
-        st.link_button(
-            "Open IPQC Finding Entry",
-            "https://ipqcfinding.streamlit.app/",
-            type="primary",
-            use_container_width=True
-        )
 
 
 # =========================================================
@@ -1848,121 +1814,43 @@ if submit_inspection:
                 submission_lock_key
             ] = True
 
-
             # =================================================
-            # CHECK FOR FAILED ITEMS
-            # =================================================
-
-            failed_items = [
-
-                item
-                for item in items
-
-                if (
-                    answers[item["id"]]["type"]
-                    == "PASS_FAIL_NA"
-
-                    and
-
-                    answers[item["id"]]["value"]
-                    == "Fail"
-                )
-            ]
-
-
-            # =================================================
-            # SUBMISSION RESULT
+            # SUBMISSION SUCCESS
+            # Checklist + Results + Findings are already saved
+            # atomically by PostgreSQL.
             # =================================================
 
-            if failed_items:
+            if failed_items_current:
 
-                # ---------------------------------------------
-                # SAVE FAILED ITEMS
-                # ---------------------------------------------
-
-                st.session_state[
-                    submission_result_key
-                ] = {
-                    "inspection_no":
-                        inspection_no,
-
-                    "failed_items": [
-                        {
-                            "item_code":
-                                failed_item["item_code"],
-
-                            "item_description":
-                                failed_item["item_description"]
-                        }
-                        for failed_item in failed_items
-                    ]
-                }
-
-
-                # ---------------------------------------------
-                # REPLACE ACTIVE SUBMIT BUTTON WITH DISABLED
-                # BUTTON — NO PAGE RERUN
-                # ---------------------------------------------
-
-                submit_button_placeholder.empty()
-
-                submit_button_placeholder.button(
-                    "Submitted ✓",
-                    type="primary",
-                    use_container_width=True,
-                    disabled=True,
-                    key="submit_inspection_button_disabled"
+                st.success(
+                    f"Inspection submitted successfully. "
+                    f"{len(failed_items_current)} Finding"
+                    f"{'s' if len(failed_items_current) != 1 else ''} "
+                    f"created."
                 )
-
-
-                # ---------------------------------------------
-                # SHOW FAILED ITEMS
-                # ---------------------------------------------
-
-                st.warning(
-                    f"⚠️ {len(failed_items)} Failed "
-                    f"Checklist Item"
-                    f"{'s' if len(failed_items) != 1 else ''} Detected"
-                )
-
-                for failed_item in failed_items:
-
-                    st.write(
-                        f"**{failed_item['item_code']}** — "
-                        f"{failed_item['item_description']}"
-                    )
-
-
-                # ---------------------------------------------
-                # FINDING ENTRY BUTTON
-                # ---------------------------------------------
-
-                st.link_button(
-                    "Open IPQC Finding Entry",
-                    "https://ipqcfinding.streamlit.app/",
-                    type="primary",
-                    use_container_width=True
-                )
-
 
             else:
+
                 st.success(
                     "Inspection submitted successfully."
                 )
 
-                time.sleep(1)
 
-                st.session_state.pop(
-                    "inspection_session_key",
-                    None
-                )
+            time.sleep(1)
 
-                st.session_state.pop(
-                    "inspection_start_time",
-                    None
-                )
 
-                st.rerun()
+            st.session_state.pop(
+                "inspection_session_key",
+                None
+            )
+
+            st.session_state.pop(
+                "inspection_start_time",
+                None
+            )
+
+
+            st.rerun()
 
 
         except Exception as e:
