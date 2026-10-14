@@ -30,7 +30,6 @@ with header_title:
         "📋 IPQC Audit Checklist"
     )
 
-
 with header_finding:
 
     st.markdown(
